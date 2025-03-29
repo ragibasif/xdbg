@@ -20,13 +20,10 @@ extern "C" {
 /*INCLUDES*/
 /*****************************************************************************/
 
-#include <ctype.h> /* size_t*/
-#include <stdarg.h>
+#include <ctype.h>   /* size_t*/
 #include <stdbool.h> /* true, false, bool */
 #include <stdio.h> /*Includes the standard I/O library for functions like `printf`.*/
 #include <stdlib.h> /*Includes the standard library for functions like `malloc`, `free`, and `realloc`.*/
-#include <string.h> /*Includes the string manipulation library for functions like `memcpy`.*/
-#include <time.h> /*time*/
 
 /*ANSI color codes for printing colored text.*/
 /*Macros defining color codes.*/

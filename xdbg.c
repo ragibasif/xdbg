@@ -21,27 +21,31 @@ static inline void xdbg_print_prefix(void) {
          XDBG_ANSI_RESET);
 }
 
-#define XDBG_INTERNAL_ERROR(msg)                                               \
-  xdbg_internal_log_wrapper(msg, "ERROR\0", XDBG_ANSI_RED)
-#define XDBG_INTERNAL_SUCCESS(msg)                                             \
-  xdbg_internal_log_wrapper(msg, "SUCCESS\0", XDBG_ANSI_GREEN)
-#define XDBG_INTERNAL_WARNING(msg)                                             \
-  xdbg_internal_log_wrapper(msg, "WARNING\0", XDBG_ANSI_YELLOW)
+#define XDBG_INTERNAL_ERROR(msg, file, line, function)                         \
+  xdbg_internal_log_wrapper(msg, "ERROR\0", XDBG_ANSI_RED, file, line, function)
+#define XDBG_INTERNAL_SUCCESS(msg, file, line, function)                       \
+  xdbg_internal_log_wrapper(msg, "SUCCESS\0", XDBG_ANSI_GREEN, file, line,     \
+                            function)
+#define XDBG_INTERNAL_WARNING(msg, file, line, function)                       \
+  xdbg_internal_log_wrapper(msg, "WARNING\0", XDBG_ANSI_YELLOW, file, line,    \
+                            function)
 
-static inline void xdbg_internal_log_wrapper(const char *message,
-                                             const char *prefix,
-                                             const char *color) {
+static inline void
+xdbg_internal_log_wrapper(const char *message, const char *prefix,
+                          const char *color, const char *file,
+                          const unsigned int line, const char *function) {
 
   xdbg_print_prefix();
-  printf("[%s%s%s%s] %s\n", color, XDBG_ANSI_BOLD, prefix, XDBG_ANSI_RESET,
-         message);
+  printf("[%s%s%s%s] in (%s%s%s %u %s%s) %s\n", color, XDBG_ANSI_BOLD, prefix,
+         XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, file, line,
+         function, XDBG_ANSI_RESET, message);
 }
 
 static void xdbg_internal_alloc_check(void *pointer, const char *file,
                                       const unsigned int line,
                                       const char *function) {
   if (!pointer) {
-    XDBG_INTERNAL_ERROR("Memory allocation failed!");
+    XDBG_INTERNAL_ERROR("Memory allocation failed!", file, line, function);
     exit(EXIT_FAILURE);
   }
 }
@@ -51,7 +55,7 @@ static bool isXDBGinitialized = false;
 static inline void xdbg_init_check(const char *file, const unsigned int line,
                                    const char *function) {
   if (!isXDBGinitialized) {
-    XDBG_INTERNAL_ERROR("Must call xdbg_init() first.");
+    XDBG_INTERNAL_ERROR("Must call xdbg_init() first.", file, line, function);
     exit(EXIT_FAILURE);
   }
 }
@@ -204,21 +208,20 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
 
 void xdbg_init(const char *file, unsigned int line, const char *function) {
   if (isXDBGinitialized) {
-    xdbg_print_prefix();
-    printf("[%s%s%s%s] %s\n", XDBG_ANSI_RED, XDBG_ANSI_BOLD, "ERROR\0",
-           XDBG_ANSI_RESET, "XDGB_INIT() was already called.");
+    XDBG_INTERNAL_ERROR("XDGB_INIT() was already called.", file, line,
+                        function);
     exit(EXIT_FAILURE);
   }
-  XDBG_INTERNAL_WARNING("Initializing XDBG");
+  XDBG_INTERNAL_WARNING("Initializing XDBG.", file, line, function);
   allocated_pointer_head = NULL;
   allocated_pointer_tail = NULL;
   isXDBGinitialized = true;
-  XDBG_INTERNAL_SUCCESS("XDBG Initialized");
+  XDBG_INTERNAL_SUCCESS("XDBG Initialized.", file, line, function);
 }
 
 void xdbg_clear(const char *file, unsigned int line, const char *function) {
   xdbg_init_check(file, line, function);
-  XDBG_INTERNAL_WARNING("Clearing XDBG");
+  XDBG_INTERNAL_WARNING("Clearing XDBG.", file, line, function);
   struct xdbg_allocated_pointer *allocated_pointer_clear =
       allocated_pointer_head;
   while (allocated_pointer_clear != NULL) {
@@ -228,9 +231,10 @@ void xdbg_clear(const char *file, unsigned int line, const char *function) {
     allocated_pointer_clear = allocated_pointer_next;
   }
   isXDBGinitialized = false;
-  XDBG_INTERNAL_SUCCESS("XDBG Cleared");
+  XDBG_INTERNAL_SUCCESS("XDBG Cleared.", file, line, function);
 }
 
+/*for testing during development*/
 int main(void) {
   puts("\n .·:''''''''''''''''''''''''''''''''''''':·.\n : :                   "
        "                  : :\n : :  ██╗  ██╗██████╗ ██████╗  ██████╗   : "
@@ -239,7 +243,7 @@ int main(void) {
        ": :\n : :  ██╔╝ ██╗██████╔╝██████╔╝╚██████╔╝  : :\n : :  ╚═╝  "
        "╚═╝╚═════╝ ╚═════╝  ╚═════╝   : :\n : :                              "
        "       : :\n '·:.....................................:·'\n ");
-  XDBG_INTERNAL_WARNING("XDBG TESTS STARTED");
+  XDBG_INTERNAL_WARNING("XDBG TESTS STARTED", __FILE__, __LINE__, __func__);
   XDBG_INIT();
   int *p = xdbg_malloc(300, __FILE__, __LINE__, __func__);
   int *q = xdbg_malloc(300 * sizeof(int), __FILE__, __LINE__, __func__);
@@ -248,7 +252,6 @@ int main(void) {
   /*int *p = malloc(300);*/
   xdbg_free(p, __FILE__, __LINE__, __func__);
 
-  XDBG_INIT();
   XDBG_REPORT();
   XDBG_CLEAR();
 
@@ -256,7 +259,7 @@ int main(void) {
   xdbg_internal_memory_debug();
 #endif // INTERNAL_MEMORY_DEBUG
 
-  XDBG_INTERNAL_WARNING("XDBG TESTS ENDED");
+  XDBG_INTERNAL_WARNING("XDBG TESTS ENDED", __FILE__, __LINE__, __func__);
 
   return 0;
 }

@@ -9,6 +9,8 @@
 ## TODO
 
 - [ ] Add documentation
+- [ ] Add `realloc`
+- [ ] Add `calloc`
 - [ ] Add thread safety
 - [ ] Add checks to match allocation and freeing of individual pointers by their address
 
