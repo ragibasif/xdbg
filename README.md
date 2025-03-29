@@ -1,6 +1,6 @@
 # xdbg
 
-**NOT THREAD SAFE!**
+**NOT THREAD SAFE!** (yet)
 
 - Memory Debugging – Detect leaks, corruption, overflows.
 - Stack Tracing – Capture call stacks on errors.

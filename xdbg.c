@@ -9,9 +9,9 @@
 
 #ifdef INTERNAL_MEMORY_DEBUG
 static void xdbg_internal_memory_debug(void) {
-  f_debug_memory_init(NULL, NULL, NULL);
-  f_debug_mem_print(0);
-  f_debug_mem_reset();
+  debug_memory_init(NULL, NULL, NULL);
+  debug_mem_print(0);
+  debug_mem_reset();
 }
 #endif // INTERNAL_MEMORY_DEBUG
 /************************************************************************/
