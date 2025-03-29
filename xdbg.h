@@ -1,17 +1,25 @@
 #ifndef __XDBG_H__
 #define __XDBG_H__
 
+/* .·:''''''''''''''''''''''''''''''''''''':·. */
+/* : :                                     : : */
+/* : :  ██╗  ██╗██████╗ ██████╗  ██████╗   : : */
+/* : :  ╚██╗██╔╝██╔══██╗██╔══██╗██╔════╝   : : */
+/* : :   ╚███╔╝ ██║  ██║██████╔╝██║  ███╗  : : */
+/* : :   ██╔██╗ ██║  ██║██╔══██╗██║   ██║  : : */
+/* : :  ██╔╝ ██╗██████╔╝██████╔╝╚██████╔╝  : : */
+/* : :  ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝   : : */
+/* : :                                     : : */
+/* '·:.....................................:·' */
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
-
-/*TODO: figure out how to do stack tracing */
 
 /*****************************************************************************/
 /*INCLUDES*/
 /*****************************************************************************/
 
-/*#include <execinfo.h> // for stack tracing*/
 #include <ctype.h> /* size_t*/
 #include <stdarg.h>
 #include <stdbool.h> /* true, false, bool */
@@ -40,36 +48,38 @@ extern "C" {
 /*XDBG_ENABLE*/
 /*****************************************************************************/
 
-/*#ifndef XDBG_ENABLE*/
-#ifdef XDBG_ENABLE
+#ifndef XDBG_ENABLE
 /*#define XDBG_ENABLE*/
+#endif // XDBG_ENABLE
+
+#ifdef XDBG_ENABLE
 /*#define malloc(size) xdbg_malloc(size, __FILE__, __LINE__, __func__)*/
 /*#define free(pointer) xdbg_free(pointer, __FILE__, __LINE__, __func__)*/
+#define XDBG_INIT() xdbg_init(__FILE__, __LINE__, __func__)
+#define XDBG_REPORT() xdbg_report(__FILE__, __LINE__, __func__)
+#define XDBG_CLEAR() xdbg_clear(__FILE__, __LINE__, __func__)
 #else
-#define XDBG_LOG(msg)
-#define XDBG_ERROR(msg)
+#define XDBG_INIT()
+#define XDBG_REPORT()
+#define XDBG_CLEAR()
 #endif // XDBG_ENABLE
 
 /*****************************************************************************/
-/*DEBUG LOGGING*/
+/*DEBUG MEMORY*/
 /*****************************************************************************/
 
-/*XDBG API*/
-extern void xdbg_init(void);
-extern void xdbg_clear(void);
-extern void xdbg_report(void);
-
-/*XDBG Memory Functions*/
+extern void xdbg_init(const char *file, unsigned int line,
+                      const char *function);
+extern void xdbg_clear(const char *file, unsigned int line,
+                       const char *function);
+extern void xdbg_report(const char *file, unsigned int line,
+                        const char *function);
 extern void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                          const char *function);
 extern void *xdbg_calloc(void);  /*TODO*/
 extern void *xdbg_realloc(void); /*TODO*/
 extern void xdbg_free(void *pointer, const char *file, unsigned int line,
                       const char *function);
-
-/*****************************************************************************/
-/*DEBUG MEMORY*/
-/*****************************************************************************/
 
 #ifdef __cplusplus
 }

@@ -3,13 +3,18 @@
 **NOT THREAD SAFE!** (yet)
 
 - Memory Debugging – Detect leaks, corruption, overflows.
-- Stack Tracing – Capture call stacks on errors.
 - Minimal Overhead – As light as possible for fast debugging.
 - Toggle debugging
 
+## TODO
+
+- [ ] Add documentation
+- [ ] Add thread safety
+- [ ] Add checks to match allocation and freeing of individual pointers by their address
+
 ## Compiling with Debugging:
 
-To enable the debugging, you can define XDBG_ENABLE during compilation, like so:
+To enable the debugging, you can define `XDBG_ENABLE` during compilation, like so:
 
 ```bash
 gcc -DXDBG_ENABLE -o my_program my_program.c
