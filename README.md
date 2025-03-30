@@ -1,6 +1,9 @@
 # xdbg
 
-**NOT THREAD SAFE!** (yet)
+> [!warning]
+>
+> - **NOT THREAD SAFE!** (_yet_)
+> - Exclusively developed and tested on MacOS M1 (_for now_)
 
 - Memory Debugging – Detect leaks, corruption, overflows.
 - Minimal Overhead – As light as possible for fast debugging.
@@ -13,6 +16,8 @@
 - [ ] Add `calloc`
 - [ ] Add thread safety
 - [ ] Add checks to match allocation and freeing of individual pointers by their address
+- [ ] Add stack tracing (_maybe_)
+- [ ] Make the library portable
 
 ## Compiling with Debugging:
 
@@ -32,3 +37,13 @@ Include the following define in a source file:
 ```
 
 This setup keeps `xdbg` as lightweight as possible with macros that can be entirely stripped out when not needed.
+
+## References
+
+1. [malloc](https://en.cppreference.com/w/c/memory/malloc)
+2. [realloc](https://en.cppreference.com/w/c/memory/realloc)
+3. [calloc](https://en.cppreference.com/w/c/memory/calloc)
+4. [free](https://en.cppreference.com/w/c/memory/free)
+5. [What is a stack trace...?](https://stackoverflow.com/questions/3988788/what-is-a-stack-trace-and-how-can-i-use-it-to-debug-my-application-errors)
+6. [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
+7. [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)

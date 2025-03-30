@@ -56,5 +56,16 @@ all: $(OBJS)
 clean:
 	$(RM) $(OBJS) $(TARGET) *~ *.bak
 
+run:
+	./run.sh
+
 # Phony targets
 .PHONY: all clean default
+
+
+help:
+	@echo "Makefile for Building XDBG."
+	@echo "Usage: make [ all | clean | help | run ]"
+
+
+
