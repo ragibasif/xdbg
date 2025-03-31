@@ -68,10 +68,10 @@ struct xdbg_allocation_record {
 struct xdbg_allocation_record allocation_record = {0, 0};
 
 enum memory_function {
-  MEM_FUNC_MALLOC,
-  MEM_FUNC_REALLOC,
-  MEM_FUNC_CALLOC,
-  MEM_FUNC_FREE
+  MEMORY_FUNCTION_MALLOC,
+  MEMORY_FUNCTION_REALLOC,
+  MEMORY_FUNCTION_CALLOC,
+  MEMORY_FUNCTION_FREE
 };
 
 struct xdbg_allocated_pointer {
@@ -93,16 +93,16 @@ static inline void
 xdbg_internal_pointer_print_format(struct xdbg_allocated_pointer *pointer) {
   char *memory_function_literal;
   switch (pointer->mem_func) {
-  case MEM_FUNC_MALLOC:
+  case MEMORY_FUNCTION_MALLOC:
     memory_function_literal = "malloc\0";
     break;
-  case MEM_FUNC_CALLOC:
+  case MEMORY_FUNCTION_CALLOC:
     memory_function_literal = "calloc\0";
     break;
-  case MEM_FUNC_REALLOC:
+  case MEMORY_FUNCTION_REALLOC:
     memory_function_literal = "realloc\0";
     break;
-  case MEM_FUNC_FREE:
+  case MEMORY_FUNCTION_FREE:
     memory_function_literal = "free\0";
     break;
   default:
@@ -141,7 +141,7 @@ void *xdbg_malloc(size_t size, const char *file, unsigned int line,
 
   curr->pointer = pointer;
   curr->size = size;
-  curr->mem_func = MEM_FUNC_MALLOC;
+  curr->mem_func = MEMORY_FUNCTION_MALLOC;
   curr->file = file;
   curr->line = line;
   curr->function = function;
@@ -173,7 +173,7 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
   curr->pointer = pointer;
   curr->size = 0;
-  curr->mem_func = MEM_FUNC_FREE;
+  curr->mem_func = MEMORY_FUNCTION_FREE;
   curr->file = file;
   curr->line = line;
   curr->function = function;
