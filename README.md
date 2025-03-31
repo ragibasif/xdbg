@@ -1,5 +1,8 @@
 # xdbg
 
+> [!note]
+> This library is not complete and will be converted to a single header file once the required features are complete.
+
 > [!warning]
 >
 > - **NOT THREAD SAFE!** (_yet_)
