@@ -5,7 +5,7 @@
 /************************************************************************/
 
 #define INTERNAL_MEMORY_DEBUG
-#include "internal_memory_debug.h"
+#include "imd.h"
 
 #ifdef INTERNAL_MEMORY_DEBUG
 static void xdbg_internal_memory_debug(void) {

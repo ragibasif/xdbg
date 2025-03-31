@@ -42,7 +42,7 @@ CC = gcc
 DEBUG_CFLAGS = -Wall -Wextra -O0 -g -pedantic -DDEBUG -DXDBG_ENABLE
 # -03 -DNDEBUG for release build
 RELEASE_CFLAGS = -O3 -DNDEBUG
-CFLAGS = $(DEBUG_CFLAGS)
+CFLAGS = -std=c99 $(DEBUG_CFLAGS)
 # CFLAGS = $(RELEASE_CFLAGS)
 
 LDFLAGS = # linking flags: -lm -lefence

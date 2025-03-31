@@ -11,6 +11,7 @@
 /* : :  ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝   : : */
 /* : :                                     : : */
 /* '·:.....................................:·' */
+/* '·:..................Ragib Asif.........:·' */
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,8 +26,7 @@ extern "C" {
 #include <stdio.h> /*Includes the standard I/O library for functions like `printf`.*/
 #include <stdlib.h> /*Includes the standard library for functions like `malloc`, `free`, and `realloc`.*/
 
-/*ANSI color codes for printing colored text.*/
-/*Macros defining color codes.*/
+/*Macros defining ANSI color codes.*/
 #define XDBG_ANSI_RED "\x1b[91m"
 #define XDBG_ANSI_GREEN "\x1b[92m"
 #define XDBG_ANSI_YELLOW "\x1b[93m"
