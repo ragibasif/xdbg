@@ -51,6 +51,9 @@ extern "C" {
 
 #ifdef XDBG_ENABLE
 /*#define malloc(size) xdbg_malloc(size, __FILE__, __LINE__, __func__)*/
+/*#define realloc(size) xdbg_realloc(pointer,size, __FILE__, __LINE__,
+ * __func__)*/
+/*#define calloc(size) xdbg_calloc(number,size, __FILE__, __LINE__, __func__)*/
 /*#define free(pointer) xdbg_free(pointer, __FILE__, __LINE__, __func__)*/
 #define XDBG_INIT() xdbg_init(__FILE__, __LINE__, __func__)
 #define XDBG_REPORT() xdbg_report(__FILE__, __LINE__, __func__)

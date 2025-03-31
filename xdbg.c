@@ -160,7 +160,7 @@ void *xdbg_malloc(size_t size, const char *file, unsigned int line,
   return pointer;
 }
 
-void *xdbg_malloc(size_t number, size_t size, const char *file,
+void *xdbg_calloc(size_t number, size_t size, const char *file,
                   unsigned int line, const char *function);
 void *xdbg_realloc(void *pointer, size_t size, const char *file,
                    unsigned int line, const char *function);
