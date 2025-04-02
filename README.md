@@ -52,3 +52,4 @@ This setup keeps `xdbg` as lightweight as possible with macros that can be entir
 5. [What is a stack trace...?](https://stackoverflow.com/questions/3988788/what-is-a-stack-trace-and-how-can-i-use-it-to-debug-my-application-errors)
 6. [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
 7. [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)
+8. [Should I cast the result of malloc (in C)?](https://stackoverflow.com/questions/605845/should-i-cast-the-result-of-malloc-in-c)
