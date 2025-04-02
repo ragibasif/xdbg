@@ -15,12 +15,12 @@
 ## TODO
 
 - [ ] Add documentation
-- [ ] Add `realloc`
-- [ ] Add `calloc`
+- [x] Add `realloc` Wed Apr 2 16:08:31 EDT 2025
+- [x] Add `calloc` Wed Apr 2 16:41:33 EDT 2025
 - [ ] Add thread safety
 - [ ] Add checks to match allocation and freeing of individual pointers by their address
 - [ ] Add stack tracing (_maybe_)
-- [ ] Make the library portable
+- [ ] Make the library portable (usable in UNIX and Windows)
 
 ## Compiling with Debugging:
 

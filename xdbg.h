@@ -75,18 +75,13 @@ extern void xdbg_clear(const char *file, unsigned int line,
                        const char *function);
 extern void xdbg_report(const char *file, unsigned int line,
                         const char *function);
-/*https://en.cppreference.com/w/c/memory/malloc*/
 extern void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                          const char *function);
 /*TODO*/
-/*https://en.cppreference.com/w/c/memory/calloc*/
 extern void *xdbg_calloc(size_t number, size_t size, const char *file,
                          unsigned int line, const char *function);
-/*TODO*/
-/*https://en.cppreference.com/w/c/memory/realloc*/
 extern void *xdbg_realloc(void *pointer, size_t size, const char *file,
                           unsigned int line, const char *function);
-/*https://en.cppreference.com/w/c/memory/free*/
 extern void xdbg_free(void *pointer, const char *file, unsigned int line,
                       const char *function);
 
