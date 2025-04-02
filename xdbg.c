@@ -4,7 +4,7 @@
 /*INTERNAL DEBUGGING*/
 /************************************************************************/
 
-/*#define INTERNAL_MEMORY_DEBUG*/
+#define INTERNAL_MEMORY_DEBUG
 #include "imd.h"
 
 #ifdef INTERNAL_MEMORY_DEBUG
@@ -77,15 +77,16 @@ enum memory_function_type {
 struct xdbg_allocated_pointer {
   void *pointer; // address of the pointer
   size_t size;   // size of the allocated memory in bytes
-  enum memory_function_type memory_function; // type of memory function
-  const char *file;          // name of file the pointer was allocated/freed
-  unsigned int line;         // line number of the allocation/free
-  const char *function;      // function name of the allocation/free
-  unsigned int total_allocs; // total number of allocations so far
-  unsigned int total_frees;  // total number of frees so far
+  enum memory_function_type memory_function; // type of memory function called
+  const char *file;  // name of file the pointer was allocated/freed
+  unsigned int line; // line number of the allocation/free
+  const char
+      *function; // function name of where the pointer was allocated/freed
+  bool freed;
+  unsigned int total_allocs;           // total number of allocations so far
+  unsigned int total_frees;            // total number of frees so far
   struct xdbg_allocated_pointer *next; // the address of the next struct
   /*struct xdbg_allocated_pointer *prev; // the address of the previous struct*/
-  bool freed;
 };
 
 struct xdbg_allocated_pointer *allocated_pointer_head;
@@ -124,6 +125,9 @@ xdbg_internal_pointer_print_format(struct xdbg_allocated_pointer *pointer) {
   xdbg_print_prefix();
   printf("[Allocated Bytes] %s%s%lu%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          pointer->size, XDBG_ANSI_RESET);
+  xdbg_print_prefix();
+  printf("[Pointer Freed] %s%s%u%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
+         pointer->freed, XDBG_ANSI_RESET);
   xdbg_print_prefix();
   printf("[Total Allocations] %s%s%u%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          pointer->total_allocs, XDBG_ANSI_RESET);
@@ -168,6 +172,17 @@ void *xdbg_calloc(size_t number, size_t size, const char *file,
 void *xdbg_realloc(void *pointer, size_t size, const char *file,
                    unsigned int line, const char *function);
 
+static void *xdbg_find_pointer(void *pointer) {
+  struct xdbg_allocated_pointer *curr = allocated_pointer_head;
+  while (curr) {
+    if (curr->pointer == pointer) {
+      return curr;
+    }
+    curr = curr->next;
+  }
+  return NULL;
+}
+
 void xdbg_free(void *pointer, const char *file, unsigned int line,
                const char *function) {
   xdbg_init_check(file, line, function);
@@ -186,7 +201,6 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
   curr->function = function;
   curr->next = NULL;
   curr->freed = true;
-
   if (allocated_pointer_head == NULL) {
     allocated_pointer_head = curr;
     allocated_pointer_tail = allocated_pointer_head;
@@ -348,7 +362,7 @@ int main(void) {
   XDBG_INIT();
   test0();
   test1();
-  test_double_free();
+  /*test_double_free();*/
   /*test_large_alloc();*/
   /*test_memory_leak();*/
   /*test_invalid_free();*/
