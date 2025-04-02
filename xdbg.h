@@ -25,6 +25,7 @@ extern "C" {
 #include <stdbool.h> /* true, false, bool */
 #include <stdio.h> /*Includes the standard I/O library for functions like `printf`.*/
 #include <stdlib.h> /*Includes the standard library for functions like `malloc`, `free`, and `realloc`.*/
+#include <string.h> /*memcpy*/
 
 /*Macros defining ANSI color codes.*/
 #define XDBG_ANSI_RED "\x1b[91m"
