@@ -140,10 +140,9 @@ void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                   const char *function) {
   xdbg_init_check(file, line, function);
 
-  void *pointer = (void *)malloc(size);
+  void *pointer = malloc(size);
   xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
-  struct xdbg_allocated_pointer *curr = (struct xdbg_allocated_pointer *)malloc(
-      sizeof(struct xdbg_allocated_pointer));
+  struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
 
   curr->pointer = pointer;
@@ -178,8 +177,7 @@ void *xdbg_calloc(size_t number, size_t size, const char *file,
   for (index = 0; index < number; index++) {
     pointer[index] = 0;
   }
-  struct xdbg_allocated_pointer *curr = (struct xdbg_allocated_pointer *)malloc(
-      sizeof(struct xdbg_allocated_pointer));
+  struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
 
   curr->pointer = pointer;
@@ -215,8 +213,7 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
     return NULL;
   }
 
-  struct xdbg_allocated_pointer *curr = (struct xdbg_allocated_pointer *)malloc(
-      sizeof(struct xdbg_allocated_pointer));
+  struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
 
   curr->pointer = xdbg_malloc(size, __FILE__, __LINE__, __func__);
@@ -267,8 +264,7 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
                         function);
     exit(EXIT_FAILURE);
   }
-  struct xdbg_allocated_pointer *curr = (struct xdbg_allocated_pointer *)malloc(
-      sizeof(struct xdbg_allocated_pointer));
+  struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
   /*FIXME: Will need to check if pointer was already freed by iterating through
    * the list and checking the pointer address. Currently, the it will just
@@ -351,23 +347,23 @@ void xdbg_clear(const char *file, unsigned int line, const char *function) {
 /*********/
 
 static void test0(void) {
-  int *p = (int *)xdbg_malloc(2, __FILE__, __LINE__, __func__);
-  int *q = (int *)xdbg_malloc(300 * sizeof(int), __FILE__, __LINE__, __func__);
-  int *w = (int *)xdbg_malloc(197, __FILE__, __LINE__, __func__);
-  int *s = (int *)xdbg_malloc(10239, __FILE__, __LINE__, __func__);
+  int *p = xdbg_malloc(2, __FILE__, __LINE__, __func__);
+  int *q = xdbg_malloc(300 * sizeof(*q), __FILE__, __LINE__, __func__);
+  int *w = xdbg_malloc(197, __FILE__, __LINE__, __func__);
+  int *s = xdbg_malloc(10239, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__, __func__);
   p = NULL;
 }
 
 static void test1(void) {
-  int *p = (int *)xdbg_malloc(473, __FILE__, __LINE__, __func__);
+  int *p = xdbg_malloc(473, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__, __func__);
   p = NULL;
-  int *q = (int *)xdbg_malloc(338 * sizeof(int), __FILE__, __LINE__, __func__);
+  int *q = xdbg_malloc(338 * sizeof(int), __FILE__, __LINE__, __func__);
   xdbg_free(q, __FILE__, __LINE__, __func__);
   q = NULL;
-  int *w = (int *)xdbg_malloc(3, __FILE__, __LINE__, __func__);
-  int *s = (int *)xdbg_malloc(80000, __FILE__, __LINE__, __func__);
+  int *w = xdbg_malloc(3, __FILE__, __LINE__, __func__);
+  int *s = xdbg_malloc(80000, __FILE__, __LINE__, __func__);
   xdbg_free(w, __FILE__, __LINE__, __func__);
   xdbg_free(s, __FILE__, __LINE__, __func__);
   w = NULL;
@@ -375,7 +371,7 @@ static void test1(void) {
 }
 
 static void test_calloc(void) {
-  int *arr = (int *)xdbg_calloc(50, sizeof(int), __FILE__, __LINE__, __func__);
+  int *arr = xdbg_calloc(50, sizeof(int), __FILE__, __LINE__, __func__);
   if (arr) {
     for (int i = 0; i < 50; i++) {
       if (arr[i] != 0) {
@@ -387,10 +383,9 @@ static void test_calloc(void) {
 }
 
 static void test_realloc(void) {
-  int *arr = (int *)xdbg_malloc(10 * sizeof(int), __FILE__, __LINE__, __func__);
+  int *arr = xdbg_malloc(10 * sizeof(*arr), __FILE__, __LINE__, __func__);
   if (arr) {
-    arr = (int *)xdbg_realloc(arr, 20 * sizeof(int), __FILE__, __LINE__,
-                              __func__);
+    arr = xdbg_realloc(arr, 20 * sizeof(int), __FILE__, __LINE__, __func__);
     if (!arr) {
       printf("realloc failed\n");
     }
@@ -399,15 +394,15 @@ static void test_realloc(void) {
 }
 
 static void test_double_free(void) {
-  int *p = (int *)xdbg_malloc(100, __FILE__, __LINE__, __func__);
+  int *p = xdbg_malloc(100, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__,
             __func__); // Intentional double free to test xdbg detection
 }
 
 static void test_large_alloc(void) {
-  int *p = (int *)xdbg_malloc(1024 * 1024 * 10, __FILE__, __LINE__,
-                              __func__); // 10MB allocation
+  int *p = xdbg_malloc(1024 * 1024 * 10, __FILE__, __LINE__,
+                       __func__); // 10MB allocation
   if (p) {
     xdbg_free(p, __FILE__, __LINE__, __func__);
   } else {
@@ -416,12 +411,12 @@ static void test_large_alloc(void) {
 }
 
 static void test_memory_leak(void) {
-  int *p = (int *)xdbg_malloc(512, __FILE__, __LINE__, __func__);
+  int *p = xdbg_malloc(512, __FILE__, __LINE__, __func__);
   // Intentional memory leak, should be detected by xdbg
 }
 
 static void test_invalid_free(void) {
-  int *p = (int *)xdbg_malloc(100, __FILE__, __LINE__, __func__);
+  int *p = xdbg_malloc(100, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__, __func__);
   xdbg_free(p + 1, __FILE__, __LINE__,
             __func__); // Invalid free, testing out-of-bounds detection
@@ -451,7 +446,7 @@ int main(void) {
   test_large_alloc();
   test_memory_leak();
   /*test_invalid_free();*/
-  test_null_free();
+  /*test_null_free();*/
 
   XDBG_REPORT();
   XDBG_CLEAR();

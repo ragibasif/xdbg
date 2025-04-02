@@ -15,6 +15,8 @@
 ## TODO
 
 - [ ] Add documentation
+- [ ] Handle double frees
+- [ ] Handle out of bounds pointer frees
 - [x] Add `realloc` Wed Apr 2 16:08:31 EDT 2025
 - [x] Add `calloc` Wed Apr 2 16:41:33 EDT 2025
 - [ ] Add thread safety
