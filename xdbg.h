@@ -77,7 +77,6 @@ extern void xdbg_report(const char *file, unsigned int line,
                         const char *function);
 extern void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                          const char *function);
-/*TODO*/
 extern void *xdbg_calloc(size_t number, size_t size, const char *file,
                          unsigned int line, const char *function);
 extern void *xdbg_realloc(void *pointer, size_t size, const char *file,
