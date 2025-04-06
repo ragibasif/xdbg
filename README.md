@@ -14,14 +14,17 @@
 - Memory Debugging – Detect leaks, corruption, overflows.
 - Minimal Overhead – As light as possible for fast debugging.
 - Toggle debugging
+- Track the file, line, and function where memory was allocated.
+- Logs and reports each action: `malloc`, `realloc`, `calloc`, and `free`.
+- Uses a linked lists to maintain order of allocation.
 
 ## TODO
 
+- [ ] Implement hash table to detect double frees.
+- [ ] Add canary values before/after blocks to detect memory corruption
 - [ ] Add documentation
 - [ ] Handle double frees
 - [ ] Handle out of bounds pointer frees
-- [x] Add `realloc` Wed Apr 2 16:08:31 EDT 2025
-- [x] Add `calloc` Wed Apr 2 16:41:33 EDT 2025
 - [ ] Add thread safety
 - [ ] Add checks to match allocation and freeing of individual pointers by their address
 - [ ] Add stack tracing (_maybe_)

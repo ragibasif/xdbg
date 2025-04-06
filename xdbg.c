@@ -323,6 +323,23 @@ void xdbg_clear(const char *file, unsigned int line, const char *function) {
   XDBG_INTERNAL_SUCCESS("XDBG Cleared.", file, line, function);
 }
 
+// TODO
+void xdbg_report_leaks(void) {
+  // Traverse linked list of allocations and print unfreed ones
+}
+
+// TODO
+void xdbg_check_integrity(void) {
+  // For each item in linked list, check it's in hash table and vice versa
+  // Ensure no double entries, check sizes/metadata
+}
+
+// TODO
+void xdbg_reset_tracking(void) {
+  // Frees all internal tracking structures (not user allocations!)
+  // For testing purposes only
+}
+
 /*********/
 /*TESTING*/
 /*********/
@@ -448,7 +465,7 @@ static void test_free(void) {
 
   // Case 4: free unallocated pointer (should error)
   printf("Case 4: free unallocated pointer (intentional bad free)\n");
-  int dummy;
+  int dummy = 0;
   xdbg_free(&dummy, __FILE__, __LINE__,
             __func__); // should be detected as invalid
 

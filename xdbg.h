@@ -94,6 +94,11 @@ extern void *xdbg_realloc(void *pointer, size_t size, const char *file,
                           unsigned int line, const char *function);
 extern void xdbg_free(void *pointer, const char *file, unsigned int line,
                       const char *function);
+extern void xdbg_report_leaks(void); // TODO: prints leaked allocations
+extern void xdbg_check_integrity(
+    void); // TODO: validates internal structures (linked list ↔ hash map)
+extern void xdbg_reset_tracking(
+    void); // TODO: resets tracking for clean state between tests
 
 #ifdef __cplusplus
 }
