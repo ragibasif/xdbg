@@ -4,14 +4,14 @@
 /*INTERNAL DEBUGGING*/
 /************************************************************************/
 
-#define INTERNAL_MEMORY_DEBUG
+#define IMD_MEMORY_DEBUG /* turns on the memory debugging system */
 #include "imd.h"
 
-#ifdef INTERNAL_MEMORY_DEBUG
+#ifdef IMD_MEMORY_DEBUG
 static void xdbg_internal_memory_debug(void) {
-  debug_memory_init(NULL, NULL, NULL);
-  debug_mem_print(0);
-  debug_mem_reset();
+  imd_debug_memory_init(NULL, NULL, NULL);
+  imd_debug_memory_print(0);
+  imd_debug_memory_reset();
 }
 #endif // INTERNAL_MEMORY_DEBUG
 /************************************************************************/
@@ -171,12 +171,12 @@ void *xdbg_calloc(size_t number, size_t size, const char *file,
                   unsigned int line, const char *function) {
   xdbg_init_check(file, line, function);
 
-  int *pointer = malloc(number * size);
+  int *pointer = calloc(number, size);
   xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
-  size_t index;
-  for (index = 0; index < number; index++) {
-    pointer[index] = 0;
-  }
+  // size_t index;
+  // for (index = 0; index < number; index++) {
+  //   pointer[index] = 0;
+  // }
   struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
 
@@ -206,31 +206,29 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
                    unsigned int line, const char *function) {
   xdbg_init_check(file, line, function);
 
-  if (!pointer) {
-    return xdbg_malloc(size, __FILE__, __LINE__, __func__);
-  } else if (size == 0) {
-    xdbg_free(pointer, __FILE__, __LINE__, __func__);
-    return NULL;
-  }
+  // FIXME: not tracking correctly
+
+  // if (!pointer) {
+  //   return xdbg_malloc(size, __FILE__, __LINE__, __func__);
+  // } else if (size == 0) {
+  //   xdbg_free(pointer, __FILE__, __LINE__, __func__);
+  //   return NULL;
+  // }
+
+  pointer = realloc(pointer, size);
+  xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
 
   struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
 
-  curr->pointer = xdbg_malloc(size, __FILE__, __LINE__, __func__);
+  curr->pointer = pointer;
   curr->size = size;
-  memcpy(curr->pointer, pointer, curr->size);
   curr->memory_function = MEMORY_FUNCTION_REALLOC;
   curr->file = file;
   curr->line = line;
   curr->function = function;
   curr->next = NULL;
-
   curr->freed = false;
-
-  free(pointer);
-  pointer = xdbg_malloc(size, __FILE__, __LINE__, __func__);
-  xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
-  memcpy(pointer, curr->pointer, curr->size);
 
   if (allocated_pointer_head == NULL) {
     allocated_pointer_head = curr;
@@ -239,7 +237,9 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
     allocated_pointer_tail->next = curr;
     allocated_pointer_tail = allocated_pointer_tail->next;
   }
-  allocation_record.total_allocations++;
+  if (size == 0) {
+    allocation_record.total_frees++;
+  }
   curr->total_allocs = allocation_record.total_allocations;
   curr->total_frees = allocation_record.total_frees;
   return pointer;
@@ -249,6 +249,12 @@ static void *xdbg_find_pointer(void *pointer) {
   struct xdbg_allocated_pointer *curr = allocated_pointer_head;
   while (curr) {
     if (curr->pointer == pointer) {
+      printf("curr->freed: %u\n", curr->freed);
+      if (curr->freed == true) {
+        XDBG_INTERNAL_ERROR("Attempted to free an already freed pointer.",
+                            __FILE__, __LINE__, __func__);
+        exit(EXIT_FAILURE);
+      }
       return curr;
     }
     curr = curr->next;
@@ -264,8 +270,10 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
                         function);
     exit(EXIT_FAILURE);
   }
-  struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
-  xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
+  struct xdbg_allocated_pointer *curr = xdbg_find_pointer(pointer);
+
+  // struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
+  // xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
   /*FIXME: Will need to check if pointer was already freed by iterating through
    * the list and checking the pointer address. Currently, the it will just
    * create a new node with the updated status. This fails if the pointer was
@@ -274,6 +282,9 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
   /*FIXME:Invalid free, out-of-bounds detection
    * currently just seg faults*/
 
+  if (pointer != NULL) {
+    free(pointer);
+  }
   curr->pointer = pointer;
   curr->size = 0;
   curr->memory_function = MEMORY_FUNCTION_FREE;
@@ -288,10 +299,6 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
   } else {
     allocated_pointer_tail->next = curr;
     allocated_pointer_tail = allocated_pointer_tail->next;
-  }
-  if (pointer != NULL) {
-    free(pointer);
-    pointer = NULL;
   }
   allocation_record.total_frees++;
   curr->total_allocs = allocation_record.total_allocations;
@@ -442,18 +449,18 @@ int main(void) {
   test1();
   test_realloc();
   test_calloc();
-  /*test_double_free();*/
+  // test_double_free();
   test_large_alloc();
   test_memory_leak();
-  /*test_invalid_free();*/
-  /*test_null_free();*/
+  // test_invalid_free();
+  test_null_free();
 
   XDBG_REPORT();
   XDBG_CLEAR();
 
-#ifdef INTERNAL_MEMORY_DEBUG
+#ifdef IMD_MEMORY_DEBUG
   xdbg_internal_memory_debug();
-#endif // INTERNAL_MEMORY_DEBUG
+#endif // IMD_MEMORY_DEBUG
 
   XDBG_INTERNAL_WARNING("XDBG TESTS ENDED", __FILE__, __LINE__, __func__);
 
