@@ -360,34 +360,6 @@ void xdbg_clear(const char *file, unsigned int line, const char *function) {
 /*TESTING*/
 /*********/
 
-static void test0(void) {
-  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
-  printf("Allocs: %d Frees: %u\n", 4, 1);
-  int *p = xdbg_malloc(2, __FILE__, __LINE__, __func__);
-  int *q = xdbg_malloc(300 * sizeof(*q), __FILE__, __LINE__, __func__);
-  int *w = xdbg_malloc(197, __FILE__, __LINE__, __func__);
-  int *s = xdbg_malloc(10239, __FILE__, __LINE__, __func__);
-  xdbg_free(p, __FILE__, __LINE__, __func__);
-  p = NULL;
-}
-
-static void test1(void) {
-  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
-  printf("Allocs: %d Frees: %u\n", 4, 4);
-  int *r = xdbg_malloc(473, __FILE__, __LINE__, __func__);
-  int *t = xdbg_malloc(338 * sizeof(int), __FILE__, __LINE__, __func__);
-  int *z = xdbg_malloc(3, __FILE__, __LINE__, __func__);
-  int *y = xdbg_malloc(80000, __FILE__, __LINE__, __func__);
-  xdbg_free(r, __FILE__, __LINE__, __func__);
-  xdbg_free(t, __FILE__, __LINE__, __func__);
-  xdbg_free(z, __FILE__, __LINE__, __func__);
-  xdbg_free(y, __FILE__, __LINE__, __func__);
-  t = NULL;
-  r = NULL;
-  z = NULL;
-  y = NULL;
-}
-
 // Summary of Malloc Test Cases:
 // Case     Description
 // 1	Normal allocation
@@ -597,68 +569,11 @@ static void test_realloc(void) {
   printf("Finished test_realloc()\n");
 }
 
-static void test_double_free(void) {
-
-  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
-  printf("Allocs: %d Frees: %u\n", 1, 2);
-  int *p = xdbg_malloc(100, __FILE__, __LINE__, __func__);
-  xdbg_free(p, __FILE__, __LINE__, __func__);
-  xdbg_free(p, __FILE__, __LINE__,
-            __func__); // Intentional double free to test xdbg detection
-}
-
-static void test_large_alloc(void) {
-
-  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
-  printf("Allocs: %d Frees: %u\n", 1, 1);
-  int *p = xdbg_malloc(1024 * 1024 * 10, __FILE__, __LINE__,
-                       __func__); // 10MB allocation
-  if (p) {
-    xdbg_free(p, __FILE__, __LINE__, __func__);
-  } else {
-    printf("Large allocation failed\n");
-  }
-}
-
-static void test_memory_leak(void) {
-
-  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
-  printf("Allocs: %d Frees: %u\n", 1, 0);
-  int *p = xdbg_malloc(512, __FILE__, __LINE__, __func__);
-  // Intentional memory leak, should be detected by xdbg
-}
-
-static void test_invalid_free(void) {
-  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
-  printf("Allocs: %d Frees: %u\n", 1, 2);
-  int *p = xdbg_malloc(100, __FILE__, __LINE__, __func__);
-  xdbg_free(p, __FILE__, __LINE__, __func__);
-  xdbg_free(p + 1, __FILE__, __LINE__,
-            __func__); // Invalid free, testing out-of-bounds detection
-}
-
-static void test_null_free(void) {
-  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
-  printf("Allocs: %d Frees: %u\n", 0, 1);
-  int *p = NULL;
-  xdbg_free(p, __FILE__, __LINE__,
-            __func__); // Should be safe but tested for robustness
-}
-
 int main(void) {
-  // test0();
-  // test1();
-  //
   // test_malloc();
   // test_free();
   // test_realloc();
   // test_calloc();
-  //
-  // test_double_free();
-  // test_large_alloc();
-  // test_memory_leak();
-  // test_invalid_free();
-  // test_null_free();
 
   XDBG_REPORT();
   XDBG_CLEAR();
