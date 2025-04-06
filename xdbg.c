@@ -1,21 +1,5 @@
 #include "xdbg.h"
 
-/************************************************************************/
-/*INTERNAL DEBUGGING*/
-/************************************************************************/
-
-// #define IMD_MEMORY_DEBUG /* turns on the memory debugging system */
-#include "imd.h"
-
-#ifdef IMD_MEMORY_DEBUG
-static void xdbg_internal_memory_debug(void) {
-  imd_debug_memory_init(NULL, NULL, NULL);
-  imd_debug_memory_print(0);
-  imd_debug_memory_reset();
-}
-#endif // INTERNAL_MEMORY_DEBUG
-/************************************************************************/
-
 static inline void xdbg_print_prefix(void) {
   printf("(%s%s%s%s) ", XDBG_ANSI_MAGENTA, XDBG_ANSI_BOLD, "xdbg",
          XDBG_ANSI_RESET);
@@ -250,23 +234,6 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
   curr->total_allocs = allocation_record.total_allocations;
   curr->total_frees = allocation_record.total_frees;
   return pointer;
-}
-
-static void *xdbg_find_pointer(void *pointer, const char *file,
-                               unsigned int line, const char *function) {
-  struct xdbg_allocated_pointer *curr = allocated_pointer_head;
-  while (curr) {
-    if (curr->pointer == pointer) {
-      if (curr->freed == true) {
-        XDBG_INTERNAL_ERROR("Attempted to free an already freed pointer.", file,
-                            line, function);
-        exit(EXIT_FAILURE);
-      }
-      return curr;
-    }
-    curr = curr->next;
-  }
-  return NULL;
 }
 
 void xdbg_free(void *pointer, const char *file, unsigned int line,
@@ -570,17 +537,15 @@ static void test_realloc(void) {
 }
 
 int main(void) {
-  // test_malloc();
-  // test_free();
-  // test_realloc();
-  // test_calloc();
+  XDBG_INIT();
+
+  test_malloc();
+  test_free();
+  test_realloc();
+  test_calloc();
 
   XDBG_REPORT();
   XDBG_CLEAR();
-
-#ifdef IMD_MEMORY_DEBUG
-  xdbg_internal_memory_debug();
-#endif // IMD_MEMORY_DEBUG
 
   XDBG_INTERNAL_WARNING("XDBG TESTS ENDED", __FILE__, __LINE__, __func__);
 
