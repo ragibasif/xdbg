@@ -1,6 +1,34 @@
-# xdbg
+<div align="center">
 
-`xdbg` is a dynamically allocated memory debugger that tracks and logs every `malloc`, `realloc`, `calloc`, and `free` and displays them to standard output to help find memory leaks, memory corruption, overflows.
+# XDBG
+
+</div>
+
+<details open="open">
+<summary>Table of Contents</summary>
+
+- [XDBG](#xdbg)
+  - [🧠 About](#-about)
+  - [📋 TODO](#-todo)
+  - [📁 Directory Structure](#-directory-structure)
+  - [🛠️ Usage](#️-usage)
+    - [💻 Installation](#-installation)
+    - [🔧 Build the project](#-build-the-project)
+    - [🧹 Clean build files](#-clean-build-files)
+    - [🏃 Run the executable](#-run-the-executable)
+    - [Compiling with Debugging in your projects:](#compiling-with-debugging-in-your-projects)
+  - [📄 Dependencies](#-dependencies)
+  - [📚 Documentation](#-documentation)
+  - [🙌 Contributing](#-contributing)
+  - [🪪 License](#-license)
+  - [👤 Author](#-author)
+  - [Acknowledgements](#acknowledgements)
+
+</details>
+
+## 🧠 About
+
+`xdbg` is a debugger for dynamically allocated memory that tracks and logs every `malloc`, `realloc`, `calloc`, and `free` and displays them to standard output to help find memory leaks, memory corruption, overflows.
 
 > [!note]
 > This library is mostly complete. By that I mean the required and intended functionalities are implemented, however there are still some bugs that need to be fixed.
@@ -18,7 +46,7 @@
 - Logs and reports each action: `malloc`, `realloc`, `calloc`, and `free`.
 - Uses a linked lists to maintain order of allocation.
 
-## TODO
+## 📋 TODO
 
 - [ ] Implement hash table to detect double frees.
 - [ ] Add canary values before/after blocks to detect memory corruption
@@ -30,7 +58,47 @@
 - [ ] Add stack tracing (_maybe_)
 - [ ] Make the library portable (usable in UNIX and Windows)
 
-## Compiling with Debugging:
+## 📁 Directory Structure
+
+```bash
+xdbg/
+├── Makefile        # Build system
+├── README.md       # This file
+└── xdbg.h          # Header file
+└── xdbg.c          # Source file
+```
+
+## 🛠️ Usage
+
+### 💻 Installation
+
+Clone the repository.
+
+```bash
+git clone git@github.com:ragibasif/xdbg.git
+```
+
+Make sure you have `gcc` and `make` installed.
+
+### 🔧 Build the project
+
+```bash
+make
+```
+
+### 🧹 Clean build files
+
+```bash
+make clean
+```
+
+### 🏃 Run the executable
+
+```bash
+./xdbg
+```
+
+### Compiling with Debugging in your projects:
 
 To enable the debugging, you can define `XDBG_ENABLE` during compilation, like so:
 
@@ -48,3 +116,33 @@ Include the following define in a source file:
 ```
 
 This setup keeps `xdbg` as lightweight as possible with macros that can be entirely stripped out when not needed.
+
+
+## 📄 Dependencies
+
+This project uses:
+
+- C99 Standard
+- GNU Make
+
+## 📚 Documentation
+
+- TODO
+
+## 🙌 Contributing
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/feature-name`)
+3. Make your changes and commit (`git commit -am 'Add new feature'`)
+4. Push to your fork (`git push origin feature/feature-name`)
+5. Open a pull request
+
+## 🪪 License
+
+This project is licensed under the **MIT license**. See the [LICENSE](LICENSE) file for details.
+
+## 👤 Author
+
+[Ragib Asif](https://github.com/ragibasif)
+
+## Acknowledgements
