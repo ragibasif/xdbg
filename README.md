@@ -7,6 +7,7 @@
 
 > [!warning]
 >
+> - RIDDLED WITH BUGS!!!
 > - **NOT THREAD SAFE!** (_yet_)
 > - Exclusively developed and tested on MacOS M1 (_for now_)
 
