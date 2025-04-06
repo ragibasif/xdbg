@@ -1,7 +1,7 @@
 # xdbg
 
 > [!note]
-> This library is not complete and will be converted to a single header file once the required features are complete.
+> This library is mostly complete. By that I mean the required and intended functionalities are implemented, however there are still some bugs that need to be fixed.
 
 > [!warning]
 >
@@ -43,13 +43,6 @@ Include the following define in a source file:
 
 This setup keeps `xdbg` as lightweight as possible with macros that can be entirely stripped out when not needed.
 
-## References
+## Acknowledgements
 
-1. [malloc](https://en.cppreference.com/w/c/memory/malloc)
-2. [realloc](https://en.cppreference.com/w/c/memory/realloc)
-3. [calloc](https://en.cppreference.com/w/c/memory/calloc)
-4. [free](https://en.cppreference.com/w/c/memory/free)
-5. [What is a stack trace...?](https://stackoverflow.com/questions/3988788/what-is-a-stack-trace-and-how-can-i-use-it-to-debug-my-application-errors)
-6. [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
-7. [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)
-8. [Should I cast the result of malloc (in C)?](https://stackoverflow.com/questions/605845/should-i-cast-the-result-of-malloc-in-c)
+This project was inspired by [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h) and [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h).

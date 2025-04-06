@@ -77,8 +77,6 @@ MAGENTA=\033[0;95m
 RESET=\033[0m
 
 
-# CXX := g++
-# CXXFLAGS := -std=c++17 -Wshadow -Wall -Wextra -pedantic -O2 -Wno-unused-result -g -D_GLIBCXX_DEBUG
 CC := gcc
 DEBUG_CFLAGS += -Wall -Wextra -O0 -g -pedantic -DDEBUG -DXDBG_ENABLE
 # -03 -DNDEBUG for release build
@@ -97,26 +95,31 @@ endif
 #linker flags: -v, -lm, -lefence
 LDFLAGS :=
 LIBS =
-INSTALLDIR := ./bin
+
+
+# Executable name
+# executable name, name of the final program
+EXECUTABLE := xdbg
+
 # Wildcards and pattern substitution
-SRCS := $(wildcard *.c )
-HDRS := $(wildcard *.h )
+# Source and object files
+SRCS := $(wildcard *.c)
+HDRS := $(wildcard *.h)
 # need to use pattern substitution because objects files may not always exist
 OBJS := $(patsubst %.c, %.o, $(SRCS))
 
-# executable name, name of the final program
-EXEC := xdbg
 
+
+# Default rule
 default: all
-
 
 
 # This line uses the special target ".PHONY". It says that the word "clean", "all", etc.,
 # are all phony targets. So even if there is a file named "clean" in the directory,
 # make will ignore it and run the rule for the phony target "clean".
-.PHONY: all clean default help run install
+.PHONY: all clean default help run
 
-all: $(EXEC)
+all: $(EXECUTABLE)
 
 
 # Automatic variables:
@@ -128,22 +131,16 @@ all: $(EXEC)
 #       from an implicit rule, this is the first prerequisite added by the
 #       implicit rule.
 
-# name the executable whatever the name of the target is,
-# and to compile using all of the prerequisites then echo the changed prerequisites
-#
-# $(EXEC): $(OBJS)
-# 	@echo "${MAGENTA}make all${RESET} $(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)"
-# 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
-# 	@ echo Changed files: $?
-
 # Build executable with colored success/failure
-$(EXEC): $(OBJS)
+# Link objects into the final executable
+$(EXECUTABLE): $(OBJS)
 	@echo "🔧 Linking ${MAGENTA}$@${RESET} ..."
 	@$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) && \
 		echo "$(GREEN)✅ Build successful: $@$(RESET)" || \
 		(echo "$(RED)❌ Linking failed: $@$(RESET)" && exit 1)
 
 # This tells Make how to build any .o file from its corresponding .c file.
+# Compile .c files to .o files
 %.o: %.c
 	@echo "🔧 Compiling ${MAGENTA}$<${RESET} ..."
 	@$(CC) $(CFLAGS) -c $< -o $@ && \
@@ -151,43 +148,39 @@ $(EXEC): $(OBJS)
 		(echo "$(RED)❌ Compile failed: $<$(RESET)" && exit 1)
 
 
+
 # RM - is 'rm -f' by default
 # The "*.o" is expanded by the shell to include all .o files in the current directory.
+# Clean build files
 
 clean:
-	@echo "${MAGENTA}make clean${RESET} $(RM) -r $(EXEC) $(OBJS) $(INSTALLDIR) *~ *.bak *.dSYM *.out .install"
-	@$(RM) -r $(EXEC) $(OBJS) $(INSTALLDIR) *~ *.bak *.dSYM *.out .install
-
-run:
-	@echo "${MAGENTA}make run${RESET} ./run.sh"
-	@./run.sh
+	@echo "${MAGENTA}make clean${RESET} $(RM) -r $(EXECUTABLE) $(OBJS) *~ *.bak *.dSYM *.out"
+	@$(RM) -r $(EXECUTABLE) $(OBJS) *~ *.bak *.dSYM *.out
 
 
+# Optional: run the program
+run: $(EXECUTABLE)
+	@echo "${MAGENTA}make run${RESET}"
+	@make clean
+	@make all
+	@./$(EXECUTABLE)
 
-# It is common to supply a "make install" command when providing software
-# packages for distribution.
-install: $(EXEC)
-	@ if [ ! -d $(INSTALLDIR) ] ; then mkdir -p $(INSTALLDIR) ; fi
-	@cp $(EXEC) $(INSTALLDIR)
-	@touch .install && echo $(shell date) >> .install
 
 # Since make is verbose by default, the "@" turns off echoing
 
 
 help:
 	@echo "${MAGENTA}make help${RESET}"
-	@echo "Makefile for Building ${MAGENTA}${EXEC}${RESET}."
+	@echo "Makefile for Building ${MAGENTA}${EXECUTABLE}${RESET}."
 	@echo "Usage:"
 	@echo "  ${MAGENTA}make${RESET}             — debug build"
 	@echo "  ${MAGENTA}make DEBUG=1${RESET}     — force debug build"
 	@echo "  ${MAGENTA}make RELEASE=1${RESET}   — release build"
 	@echo "  ${MAGENTA}make clean${RESET}       — remove built files"
-	@echo "  ${MAGENTA}make run${RESET}         — run program using ./run.sh"
-	@echo "  ${MAGENTA}make install${RESET}     — install binary to $(INSTALLDIR)"
+	@echo "  ${MAGENTA}make run${RESET}         — run program"
 
 #################################################################################
 # References:
 #
 # 1. [Stewart Weiss Make-Tutorial](https://gitlab.com/stewartweiss/Make-Tutorial)
-#
 #
