@@ -1,5 +1,7 @@
 # xdbg
 
+`xdbg` is a dynamically allocated memory debugger that tracks and logs every `malloc`, `realloc`, `calloc`, and `free` and displays them to standard output to help find memory leaks, memory corruption, overflows.
+
 > [!note]
 > This library is mostly complete. By that I mean the required and intended functionalities are implemented, however there are still some bugs that need to be fixed.
 

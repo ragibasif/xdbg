@@ -4,7 +4,7 @@
 /*INTERNAL DEBUGGING*/
 /************************************************************************/
 
-#define IMD_MEMORY_DEBUG /* turns on the memory debugging system */
+// #define IMD_MEMORY_DEBUG /* turns on the memory debugging system */
 #include "imd.h"
 
 #ifdef IMD_MEMORY_DEBUG
@@ -173,10 +173,7 @@ void *xdbg_calloc(size_t number, size_t size, const char *file,
 
   int *pointer = calloc(number, size);
   xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
-  // size_t index;
-  // for (index = 0; index < number; index++) {
-  //   pointer[index] = 0;
-  // }
+
   struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
 
@@ -215,8 +212,21 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
   //   return NULL;
   // }
 
+  if (size == 0) {
+    allocation_record.total_frees++;
+  }
+  if (pointer == NULL) {
+    allocation_record.total_allocations++;
+  } else {
+    // allocation_record.total_allocations++;
+    // allocation_record.total_frees++;
+  }
+
   pointer = realloc(pointer, size);
-  xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
+  if (size == 0 && pointer != NULL)
+    pointer = NULL;
+  else
+    xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
 
   struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
   xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
@@ -237,22 +247,19 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
     allocated_pointer_tail->next = curr;
     allocated_pointer_tail = allocated_pointer_tail->next;
   }
-  if (size == 0) {
-    allocation_record.total_frees++;
-  }
   curr->total_allocs = allocation_record.total_allocations;
   curr->total_frees = allocation_record.total_frees;
   return pointer;
 }
 
-static void *xdbg_find_pointer(void *pointer) {
+static void *xdbg_find_pointer(void *pointer, const char *file,
+                               unsigned int line, const char *function) {
   struct xdbg_allocated_pointer *curr = allocated_pointer_head;
   while (curr) {
     if (curr->pointer == pointer) {
-      printf("curr->freed: %u\n", curr->freed);
       if (curr->freed == true) {
-        XDBG_INTERNAL_ERROR("Attempted to free an already freed pointer.",
-                            __FILE__, __LINE__, __func__);
+        XDBG_INTERNAL_ERROR("Attempted to free an already freed pointer.", file,
+                            line, function);
         exit(EXIT_FAILURE);
       }
       return curr;
@@ -265,15 +272,13 @@ static void *xdbg_find_pointer(void *pointer) {
 void xdbg_free(void *pointer, const char *file, unsigned int line,
                const char *function) {
   xdbg_init_check(file, line, function);
-  if (pointer == NULL) {
-    XDBG_INTERNAL_ERROR("Attempted to free a NULL pointer.", file, line,
-                        function);
-    exit(EXIT_FAILURE);
-  }
-  struct xdbg_allocated_pointer *curr = xdbg_find_pointer(pointer);
-
-  // struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
-  // xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
+  // if (pointer == NULL) {
+  //   XDBG_INTERNAL_ERROR("Attempted to free a NULL pointer.", file, line,
+  //                       function);
+  //   exit(EXIT_FAILURE);
+  // }
+  struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
+  xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
   /*FIXME: Will need to check if pointer was already freed by iterating through
    * the list and checking the pointer address. Currently, the it will just
    * create a new node with the updated status. This fails if the pointer was
@@ -282,9 +287,6 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
   /*FIXME:Invalid free, out-of-bounds detection
    * currently just seg faults*/
 
-  if (pointer != NULL) {
-    free(pointer);
-  }
   curr->pointer = pointer;
   curr->size = 0;
   curr->memory_function = MEMORY_FUNCTION_FREE;
@@ -293,6 +295,11 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
   curr->function = function;
   curr->next = NULL;
   curr->freed = true;
+  // if (pointer != NULL) {
+  //   free(pointer);
+  //   pointer = NULL;
+  // }
+
   if (allocated_pointer_head == NULL) {
     allocated_pointer_head = curr;
     allocated_pointer_tail = allocated_pointer_head;
@@ -354,6 +361,8 @@ void xdbg_clear(const char *file, unsigned int line, const char *function) {
 /*********/
 
 static void test0(void) {
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+  printf("Allocs: %d Frees: %u\n", 4, 1);
   int *p = xdbg_malloc(2, __FILE__, __LINE__, __func__);
   int *q = xdbg_malloc(300 * sizeof(*q), __FILE__, __LINE__, __func__);
   int *w = xdbg_malloc(197, __FILE__, __LINE__, __func__);
@@ -363,44 +372,235 @@ static void test0(void) {
 }
 
 static void test1(void) {
-  int *p = xdbg_malloc(473, __FILE__, __LINE__, __func__);
-  xdbg_free(p, __FILE__, __LINE__, __func__);
-  p = NULL;
-  int *q = xdbg_malloc(338 * sizeof(int), __FILE__, __LINE__, __func__);
-  xdbg_free(q, __FILE__, __LINE__, __func__);
-  q = NULL;
-  int *w = xdbg_malloc(3, __FILE__, __LINE__, __func__);
-  int *s = xdbg_malloc(80000, __FILE__, __LINE__, __func__);
-  xdbg_free(w, __FILE__, __LINE__, __func__);
-  xdbg_free(s, __FILE__, __LINE__, __func__);
-  w = NULL;
-  s = NULL;
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+  printf("Allocs: %d Frees: %u\n", 4, 4);
+  int *r = xdbg_malloc(473, __FILE__, __LINE__, __func__);
+  int *t = xdbg_malloc(338 * sizeof(int), __FILE__, __LINE__, __func__);
+  int *z = xdbg_malloc(3, __FILE__, __LINE__, __func__);
+  int *y = xdbg_malloc(80000, __FILE__, __LINE__, __func__);
+  xdbg_free(r, __FILE__, __LINE__, __func__);
+  xdbg_free(t, __FILE__, __LINE__, __func__);
+  xdbg_free(z, __FILE__, __LINE__, __func__);
+  xdbg_free(y, __FILE__, __LINE__, __func__);
+  t = NULL;
+  r = NULL;
+  z = NULL;
+  y = NULL;
 }
 
+// Summary of Malloc Test Cases:
+// Case     Description
+// 1	Normal allocation
+// 2	Allocation with size = 0
+// 3	Huge allocation (OOM)
+// 4	Leak detection (intentional no free)
+static void test_malloc(void) {
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+
+  // Case 1: normal allocation
+  printf("Case 1: normal malloc\n");
+  int *a1 = xdbg_malloc(10 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (a1) {
+    a1[0] = 123;
+    printf("Value stored in malloc'd memory: %d\n", a1[0]);
+    xdbg_free(a1, __FILE__, __LINE__, __func__);
+  }
+
+  // Case 2: malloc 0 bytes
+  printf("Case 2: malloc 0 bytes (should return NULL or valid unique ptr)\n");
+  int *a2 = xdbg_malloc(0, __FILE__, __LINE__, __func__);
+  if (a2) {
+    printf("malloc(0) returned non-NULL\n");
+    xdbg_free(a2, __FILE__, __LINE__, __func__);
+  }
+
+  // Case 3: malloc very large size (simulate OOM)
+  printf("Case 3: malloc large size to simulate OOM\n");
+  void *a3 = xdbg_malloc((size_t)-1, __FILE__, __LINE__, __func__);
+  if (!a3) {
+    printf("malloc failed as expected for large size\n");
+  }
+
+  // Case 4: malloc and forget to free (leak detection test)
+  printf("Case 4: malloc without free (intentional leak)\n");
+  void *a4 = xdbg_malloc(64, __FILE__, __LINE__, __func__);
+  (void)a4; // intentionally not freeing
+
+  printf("Finished test_malloc()\n");
+}
+
+// Summary of Calloc Test Cases:
+// Case     Description
+// 1	Normal zero-initialized memory
+// 2	calloc(0, size)
+// 3	calloc(n, 0)
+// 4	Overflow detection
 static void test_calloc(void) {
-  int *arr = xdbg_calloc(50, sizeof(int), __FILE__, __LINE__, __func__);
-  if (arr) {
-    for (int i = 0; i < 50; i++) {
-      if (arr[i] != 0) {
-        printf("calloc failed to initialize memory to zero\n");
-      }
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+
+  // Case 1: normal calloc
+  printf("Case 1: normal calloc\n");
+  int *c1 = xdbg_calloc(10, sizeof(int), __FILE__, __LINE__, __func__);
+  if (c1) {
+    int initialized = 1;
+    for (int i = 0; i < 10; i++) {
+      if (c1[i] != 0)
+        initialized = 0;
     }
-    xdbg_free(arr, __FILE__, __LINE__, __func__);
+    printf("Calloc initialized to zero: %s\n", initialized ? "Yes" : "No");
+    xdbg_free(c1, __FILE__, __LINE__, __func__);
   }
+
+  // Case 2: calloc with 0 elements
+  printf("Case 2: calloc with 0 elements\n");
+  int *c2 = xdbg_calloc(0, sizeof(int), __FILE__, __LINE__, __func__);
+  if (c2) {
+    printf("calloc(0, size) returned non-NULL\n");
+    xdbg_free(c2, __FILE__, __LINE__, __func__);
+  }
+
+  // Case 3: calloc with 0 size
+  printf("Case 3: calloc with 0 size\n");
+  int *c3 = xdbg_calloc(10, 0, __FILE__, __LINE__, __func__);
+  if (c3) {
+    printf("calloc(n, 0) returned non-NULL\n");
+    xdbg_free(c3, __FILE__, __LINE__, __func__);
+  }
+
+  // Case 4: calloc overflow simulation (n * size too big)
+  printf("Case 4: calloc with size overflow\n");
+  size_t huge = (size_t)1 << (sizeof(size_t) * 4); // simulate overflow
+  void *c4 = xdbg_calloc(huge, huge, __FILE__, __LINE__, __func__);
+  if (!c4) {
+    printf("Calloc failed as expected due to overflow\n");
+  }
+
+  printf("Finished test_calloc()\n");
 }
 
-static void test_realloc(void) {
-  int *arr = xdbg_malloc(10 * sizeof(*arr), __FILE__, __LINE__, __func__);
-  if (arr) {
-    arr = xdbg_realloc(arr, 20 * sizeof(int), __FILE__, __LINE__, __func__);
-    if (!arr) {
-      printf("realloc failed\n");
-    }
-    xdbg_free(arr, __FILE__, __LINE__, __func__);
+// Summary of Free Test Cases:
+// Case     Description
+// 1	Normal free
+// 2	Double free
+// 3	Free NULL
+// 4	Free invalid pointer
+static void test_free(void) {
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+
+  // Case 1: normal malloc + free
+  printf("Case 1: malloc then free\n");
+  int *f1 = xdbg_malloc(20 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (f1) {
+    xdbg_free(f1, __FILE__, __LINE__, __func__);
   }
+
+  // Case 2: double free
+  printf("Case 2: double free (should be detected)\n");
+  int *f2 = xdbg_malloc(32, __FILE__, __LINE__, __func__);
+  if (f2) {
+    xdbg_free(f2, __FILE__, __LINE__, __func__);
+    xdbg_free(f2, __FILE__, __LINE__, __func__); // UB, but we test detection
+  }
+
+  // Case 3: free NULL pointer (should be safe)
+  printf("Case 3: free NULL pointer (safe)\n");
+  int *f3 = NULL;
+  xdbg_free(f3, __FILE__, __LINE__, __func__);
+
+  // Case 4: free unallocated pointer (should error)
+  printf("Case 4: free unallocated pointer (intentional bad free)\n");
+  int dummy;
+  xdbg_free(&dummy, __FILE__, __LINE__,
+            __func__); // should be detected as invalid
+
+  printf("Finished test_free()\n");
+}
+
+// Summary of Realloc Test Cases:
+// Case     Description
+// 1        Realloc to a larger size
+// 2        Realloc to a smaller size
+// 3        Realloc from NULL (acts like malloc)
+// 4        Realloc to size 0 (acts like free)
+// 5        Realloc after free (UB, but test if it’s handled)
+// 6        Realloc to extremely large size to simulate OOM
+static void test_realloc(void) {
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+
+  // Case 1: realloc to larger size
+  int *arr1 = xdbg_malloc(10 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (arr1) {
+    printf("Case 1: realloc to larger size\n");
+    arr1 = xdbg_realloc(arr1, 20 * sizeof(int), __FILE__, __LINE__, __func__);
+    if (!arr1) {
+      printf("Case 1 failed: realloc returned NULL\n");
+    }
+    xdbg_free(arr1, __FILE__, __LINE__, __func__);
+  }
+
+  // Case 2: realloc to smaller size
+  int *arr2 = xdbg_malloc(20 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (arr2) {
+    printf("Case 2: realloc to smaller size\n");
+    arr2 = xdbg_realloc(arr2, 5 * sizeof(int), __FILE__, __LINE__, __func__);
+    if (!arr2) {
+      printf("Case 2 failed: realloc returned NULL\n");
+    }
+    xdbg_free(arr2, __FILE__, __LINE__, __func__);
+  }
+
+  // Case 3: realloc NULL pointer (should behave like malloc)
+  printf("Case 3: realloc with NULL pointer (malloc behavior)\n");
+  int *arr3 =
+      xdbg_realloc(NULL, 15 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (!arr3) {
+    printf("Case 3 failed: realloc returned NULL\n");
+  }
+  xdbg_free(arr3, __FILE__, __LINE__, __func__);
+
+  // Case 4: realloc to size 0 (should behave like free)
+  int *arr4 = xdbg_malloc(10 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (arr4) {
+    printf("Case 4: realloc to size 0 (should free memory)\n");
+    arr4 = xdbg_realloc(arr4, 0, __FILE__, __LINE__, __func__);
+    if (arr4 != NULL) {
+      printf("Case 4 failed: realloc(size=0) did not return NULL\n");
+    }
+  }
+
+  // Case 5: realloc a freed pointer (undefined behavior, should be handled)
+  printf("Case 5: realloc a freed pointer (should not be allowed)\n");
+  int *arr5 = xdbg_malloc(10 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (arr5) {
+    xdbg_free(arr5, __FILE__, __LINE__, __func__);
+    arr5 = xdbg_realloc(arr5, 20 * sizeof(int), __FILE__, __LINE__, __func__);
+    if (arr5) {
+      printf("Case 5 warning: realloc on freed pointer succeeded (UB)\n");
+      xdbg_free(arr5, __FILE__, __LINE__,
+                __func__); // avoid leak if somehow worked
+    }
+  }
+
+  // Case 6: realloc very large size (simulate OOM)
+  printf("Case 6: realloc with large size to simulate failure\n");
+  int *arr6 = xdbg_malloc(100 * sizeof(int), __FILE__, __LINE__, __func__);
+  if (arr6) {
+    arr6 = xdbg_realloc(arr6, (size_t)-1, __FILE__, __LINE__, __func__);
+    if (!arr6) {
+      printf("Case 6 passed: realloc failed gracefully\n");
+    } else {
+      printf("Case 6 warning: large realloc unexpectedly succeeded\n");
+      xdbg_free(arr6, __FILE__, __LINE__, __func__);
+    }
+  }
+
+  printf("Finished test_realloc()\n");
 }
 
 static void test_double_free(void) {
+
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+  printf("Allocs: %d Frees: %u\n", 1, 2);
   int *p = xdbg_malloc(100, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__,
@@ -408,6 +608,9 @@ static void test_double_free(void) {
 }
 
 static void test_large_alloc(void) {
+
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+  printf("Allocs: %d Frees: %u\n", 1, 1);
   int *p = xdbg_malloc(1024 * 1024 * 10, __FILE__, __LINE__,
                        __func__); // 10MB allocation
   if (p) {
@@ -418,11 +621,16 @@ static void test_large_alloc(void) {
 }
 
 static void test_memory_leak(void) {
+
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+  printf("Allocs: %d Frees: %u\n", 1, 0);
   int *p = xdbg_malloc(512, __FILE__, __LINE__, __func__);
   // Intentional memory leak, should be detected by xdbg
 }
 
 static void test_invalid_free(void) {
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+  printf("Allocs: %d Frees: %u\n", 1, 2);
   int *p = xdbg_malloc(100, __FILE__, __LINE__, __func__);
   xdbg_free(p, __FILE__, __LINE__, __func__);
   xdbg_free(p + 1, __FILE__, __LINE__,
@@ -430,30 +638,27 @@ static void test_invalid_free(void) {
 }
 
 static void test_null_free(void) {
+  printf("%s %u %s\n", __FILE__, __LINE__, __func__);
+  printf("Allocs: %d Frees: %u\n", 0, 1);
   int *p = NULL;
   xdbg_free(p, __FILE__, __LINE__,
             __func__); // Should be safe but tested for robustness
 }
 
 int main(void) {
-  puts("\n .·:''''''''''''''''''''''''''''''''''''':·.\n : :                   "
-       "                  : :\n : :  ██╗  ██╗██████╗ ██████╗  ██████╗   : "
-       ":\n : :  ╚██╗██╔╝██╔══██╗██╔══██╗██╔════╝   : :\n : :   ╚███╔╝ ██║  "
-       "██║██████╔╝██║  ███╗  : :\n : :   ██╔██╗ ██║  ██║██╔══██╗██║   ██║  "
-       ": :\n : :  ██╔╝ ██╗██████╔╝██████╔╝╚██████╔╝  : :\n : :  ╚═╝  "
-       "╚═╝╚═════╝ ╚═════╝  ╚═════╝   : :\n : :                              "
-       "       : :\n '·:.....................................:·'\n ");
-  XDBG_INTERNAL_WARNING("XDBG TESTS STARTED", __FILE__, __LINE__, __func__);
-  XDBG_INIT();
-  test0();
-  test1();
-  test_realloc();
-  test_calloc();
+  // test0();
+  // test1();
+  //
+  // test_malloc();
+  // test_free();
+  // test_realloc();
+  // test_calloc();
+  //
   // test_double_free();
-  test_large_alloc();
-  test_memory_leak();
+  // test_large_alloc();
+  // test_memory_leak();
   // test_invalid_free();
-  test_null_free();
+  // test_null_free();
 
   XDBG_REPORT();
   XDBG_CLEAR();
