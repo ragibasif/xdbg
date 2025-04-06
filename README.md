@@ -44,7 +44,3 @@ Include the following define in a source file:
 ```
 
 This setup keeps `xdbg` as lightweight as possible with macros that can be entirely stripped out when not needed.
-
-## Acknowledgements
-
-This project was inspired by [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h) and [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h).

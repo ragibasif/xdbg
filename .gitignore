@@ -51,6 +51,3 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# Internal debugger not part of the project
-imd.c
-imd.h
