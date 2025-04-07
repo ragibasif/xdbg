@@ -16,13 +16,13 @@
     - [🔧 Build the project](#-build-the-project)
     - [🧹 Clean build files](#-clean-build-files)
     - [🏃 Run the executable](#-run-the-executable)
-    - [Compiling with Debugging in your projects:](#compiling-with-debugging-in-your-projects)
+    - [📥 Use in your projects:](#-use-in-your-projects)
   - [📄 Dependencies](#-dependencies)
   - [📚 Documentation](#-documentation)
   - [🙌 Contributing](#-contributing)
   - [🪪 License](#-license)
   - [👤 Author](#-author)
-  - [Acknowledgements](#acknowledgements)
+  - [🙏 Acknowledgements](#-acknowledgements)
 
 </details>
 
@@ -98,7 +98,9 @@ make clean
 ./xdbg
 ```
 
-### Compiling with Debugging in your projects:
+### 📥 Use in your projects:
+
+Make sure your project has access to `xdbg.h` and `xdbg.c`.
 
 To enable the debugging, you can define `XDBG_ENABLE` during compilation, like so:
 
@@ -116,7 +118,6 @@ Include the following define in a source file:
 ```
 
 This setup keeps `xdbg` as lightweight as possible with macros that can be entirely stripped out when not needed.
-
 
 ## 📄 Dependencies
 
@@ -145,4 +146,6 @@ This project is licensed under the **MIT license**. See the [LICENSE](LICENSE) f
 
 [Ragib Asif](https://github.com/ragibasif)
 
-## Acknowledgements
+## 🙏 Acknowledgements
+
+- Inspired by and references [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h) and [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h).

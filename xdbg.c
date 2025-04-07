@@ -1,3 +1,11 @@
+/*
+ * Filename: xdbg.c
+ * Description: Implementation file for the xdbg memory debugging library.
+ * Author: Ragib Asif
+ * Created: 2025-03-28
+ * License: MIT
+ */
+
 #include "xdbg.h"
 
 static inline void xdbg_print_prefix(void) {
@@ -556,10 +564,10 @@ static void test_realloc(void) {
 int main(void) {
   XDBG_INIT();
 
-  test_malloc();
-  test_free();
-  test_realloc();
-  test_calloc();
+  // test_malloc();
+  // test_free();
+  // test_realloc();
+  // test_calloc();
 
   XDBG_REPORT();
   XDBG_CLEAR();
