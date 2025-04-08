@@ -24,6 +24,10 @@
 extern "C" {
 #endif // __cplusplus
 
+#if defined(DEBUG) || defined(_DEBUG)
+#define XDBG_ENABLE
+#endif // defined(DEBUG) || defined(_DEBUG)
+
 /*****************************************************************************/
 /*                                                                           */
 /*                              INCLUDES                                     */

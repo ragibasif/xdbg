@@ -148,4 +148,5 @@ This project is licensed under the **MIT license**. See the [LICENSE](LICENSE) f
 
 ## 🙏 Acknowledgements
 
-- Inspired by and references [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h) and [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h).
+- [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
+- [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)
