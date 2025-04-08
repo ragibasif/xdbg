@@ -21,8 +21,7 @@
   - [📚 Documentation](#-documentation)
   - [🙌 Contributing](#-contributing)
   - [🪪 License](#-license)
-  - [👤 Author](#-author)
-  - [🙏 Acknowledgements](#-acknowledgements)
+  - [🙏 References](#-references)
 
 </details>
 
@@ -50,7 +49,7 @@
 
 - [ ] Implement hash table to detect double frees.
 - [ ] Add canary values before/after blocks to detect memory corruption
-- [ ] Add documentation
+- [ ] Add documentation (with doxygen?)
 - [ ] Handle double frees
 - [ ] Handle out of bounds pointer frees
 - [ ] Add thread safety
@@ -142,11 +141,8 @@ This project uses:
 
 This project is licensed under the **MIT license**. See the [LICENSE](LICENSE) file for details.
 
-## 👤 Author
+## 🙏 References
 
-[Ragib Asif](https://github.com/ragibasif)
-
-## 🙏 Acknowledgements
-
-- [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
-- [forge.h](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)
+- Kernighan, B. W., & Ritchie, D. M. (1988). The C programming language (2nd ed.). Prentice Hall.
+- Barrett, S. T. (n.d.). stb_leakcheck.h [Source code]. GitHub. https://github.com/nothings/stb/blob/master/stb_leakcheck.h
+- Steenberg, E. (n.d.). forge.h [Source code]. GitHub. https://github.com/quelsolaar/MergeSource/blob/main/forge.h
