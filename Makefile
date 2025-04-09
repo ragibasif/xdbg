@@ -24,11 +24,10 @@ SRCS := $(wildcard *.c)
 HDRS := $(wildcard *.h)
 OBJS := $(patsubst %.c, %.o, $(SRCS))
 
-default: all
-
-.PHONY: all clean default help run
 
 all: $(EXECUTABLE)
+
+.PHONY: all clean help run
 
 $(EXECUTABLE): $(OBJS)
 	@echo "🔧 Linking ${MAGENTA}$@${RESET} ..."
