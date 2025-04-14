@@ -141,8 +141,7 @@ This project uses:
 
 This project is licensed under the **MIT license**. See the [LICENSE](LICENSE) file for details.
 
-## 🙏 References
+## 🙏 Acknowledgements
 
-- Kernighan, B. W., & Ritchie, D. M. (1988). The C programming language (2nd ed.). Prentice Hall.
-- Barrett, S. T. (n.d.). stb_leakcheck.h [Source code]. GitHub. https://github.com/nothings/stb/blob/master/stb_leakcheck.h
-- Steenberg, E. (n.d.). forge.h [Source code]. GitHub. https://github.com/quelsolaar/MergeSource/blob/main/forge.h
+- [stb](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
+- [forge](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)

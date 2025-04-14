@@ -7,37 +7,14 @@
  */
 
 #include "xdbg.h"
-
-static inline void xdbg_print_prefix(void) {
-  printf("(%s%s%s%s) ", XDBG_ANSI_MAGENTA, XDBG_ANSI_BOLD, "xdbg",
-         XDBG_ANSI_RESET);
-}
-
-#define XDBG_INTERNAL_ERROR(msg, file, line, function)                         \
-  xdbg_internal_log_wrapper(msg, "ERROR\0", XDBG_ANSI_RED, file, line, function)
-#define XDBG_INTERNAL_SUCCESS(msg, file, line, function)                       \
-  xdbg_internal_log_wrapper(msg, "SUCCESS\0", XDBG_ANSI_GREEN, file, line,     \
-                            function)
-#define XDBG_INTERNAL_WARNING(msg, file, line, function)                       \
-  xdbg_internal_log_wrapper(msg, "WARNING\0", XDBG_ANSI_YELLOW, file, line,    \
-                            function)
-
-static inline void
-xdbg_internal_log_wrapper(const char *message, const char *prefix,
-                          const char *color, const char *file,
-                          const unsigned int line, const char *function) {
-
-  xdbg_print_prefix();
-  printf("[%s%s%s%s] in (%s%s%s %u %s%s) %s\n", color, XDBG_ANSI_BOLD, prefix,
-         XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, file, line,
-         function, XDBG_ANSI_RESET, message);
-}
+#define XDLOG_IMPLEMENTATION
+#include "xdlog.h"
 
 static void xdbg_internal_alloc_check(void *pointer, const char *file,
                                       const unsigned int line,
                                       const char *function) {
   if (!pointer) {
-    XDBG_INTERNAL_ERROR("Memory allocation failed!", file, line, function);
+    XDLOG_ERROR("Memory allocation failed!\n");
     exit(EXIT_FAILURE);
   }
 }
@@ -47,7 +24,7 @@ static bool isXDBGinitialized = false;
 static inline void xdbg_init_check(const char *file, const unsigned int line,
                                    const char *function) {
   if (!isXDBGinitialized) {
-    XDBG_INTERNAL_ERROR("Must call xdbg_init() first.", file, line, function);
+    XDLOG_ERROR("Must call xdbg_init() first.\n");
     exit(EXIT_FAILURE);
   }
 }
@@ -105,25 +82,18 @@ xdbg_internal_pointer_print_format(struct xdbg_allocated_pointer *pointer) {
     break;
   }
 
-  xdbg_print_prefix();
   printf("[Call Location] %s%s%s %u %s%s\n", XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
          pointer->file, pointer->line, pointer->function, XDBG_ANSI_RESET);
-  xdbg_print_prefix();
   printf("[Allocation Function] %s%s%s%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          memory_function_literal, XDBG_ANSI_RESET);
-  xdbg_print_prefix();
   printf("[Pointer Address] %s%s%p%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          (void *)pointer->pointer, XDBG_ANSI_RESET);
-  xdbg_print_prefix();
   printf("[Allocated Bytes] %s%s%lu%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          pointer->size, XDBG_ANSI_RESET);
-  xdbg_print_prefix();
   printf("[Pointer Freed] %s%s%u%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          pointer->freed, XDBG_ANSI_RESET);
-  xdbg_print_prefix();
   printf("[Total Allocations] %s%s%u%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          pointer->total_allocs, XDBG_ANSI_RESET);
-  xdbg_print_prefix();
   printf("[Total Frees] %s%s%u%s\n", XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
          pointer->total_frees, XDBG_ANSI_RESET);
 }
@@ -248,8 +218,7 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
                const char *function) {
   xdbg_init_check(file, line, function);
   // if (pointer == NULL) {
-  //   XDBG_INTERNAL_ERROR("Attempted to free a NULL pointer.", file, line,
-  //                       function);
+  //   XDLOG_ERROR("Attempted to free a NULL pointer.\n");
   //   exit(EXIT_FAILURE);
   // }
   struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
@@ -290,8 +259,7 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
 void xdbg_report(const char *file, unsigned int line, const char *function) {
   xdbg_init_check(file, line, function);
   putchar('\n');
-  xdbg_print_prefix();
-  puts("XDBG Memory Report\n");
+  XDLOG("XDBG Memory Report\n");
   struct xdbg_allocated_pointer *show_all_pointers_head =
       allocated_pointer_head;
   while (show_all_pointers_head != NULL) {
@@ -305,20 +273,19 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
 
 void xdbg_init(const char *file, unsigned int line, const char *function) {
   if (isXDBGinitialized) {
-    XDBG_INTERNAL_ERROR("XDGB_INIT() was already called.", file, line,
-                        function);
+    XDLOG_ERROR("XDGB_INIT() was already called.\n");
     exit(EXIT_FAILURE);
   }
-  XDBG_INTERNAL_WARNING("Initializing XDBG.", file, line, function);
+  XDLOG_WARNING("Initializing XDBG.\n");
   allocated_pointer_head = NULL;
   allocated_pointer_tail = NULL;
   isXDBGinitialized = true;
-  XDBG_INTERNAL_SUCCESS("XDBG Initialized.", file, line, function);
+  XDLOG_SUCCESS("XDBG Initialized.\n");
 }
 
 void xdbg_clear(const char *file, unsigned int line, const char *function) {
   xdbg_init_check(file, line, function);
-  XDBG_INTERNAL_WARNING("Clearing XDBG.", file, line, function);
+  XDLOG_WARNING("Clearing XDBG.\n");
   struct xdbg_allocated_pointer *allocated_pointer_clear =
       allocated_pointer_head;
   while (allocated_pointer_clear != NULL) {
@@ -328,7 +295,7 @@ void xdbg_clear(const char *file, unsigned int line, const char *function) {
     allocated_pointer_clear = allocated_pointer_next;
   }
   isXDBGinitialized = false;
-  XDBG_INTERNAL_SUCCESS("XDBG Cleared.", file, line, function);
+  XDLOG_SUCCESS("XDBG Cleared.\n");
 }
 
 // TODO
@@ -572,7 +539,7 @@ int main(void) {
   XDBG_REPORT();
   XDBG_CLEAR();
 
-  XDBG_INTERNAL_WARNING("XDBG TESTS ENDED", __FILE__, __LINE__, __func__);
+  XDLOG_WARNING("XDBG TESTS ENDED\n");
 
   return 0;
 }
