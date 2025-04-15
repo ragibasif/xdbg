@@ -24,14 +24,9 @@
 extern "C" {
 #endif // __cplusplus
 
-#if defined(DEBUG) || defined(_DEBUG)
-#define XDBG_ENABLE
-#endif // defined(DEBUG) || defined(_DEBUG)
 
 /*****************************************************************************/
-/*                                                                           */
-/*                              INCLUDES                                     */
-/*                                                                           */
+/*                                                                  INCLUDES */
 /*****************************************************************************/
 
 #include <ctype.h>   // size_t
@@ -41,60 +36,22 @@ extern "C" {
 #include <string.h> // memcpy
 
 /*****************************************************************************/
-/*                                                                           */
-/*                         ANSI COLOR CODES                                  */
-/*                                                                           */
+/*                                                                    ENABLE */
 /*****************************************************************************/
 
-/**
- * @brief ANSI escape code macros for styling terminal output (color, bold,
- * italic).
- *
- * These macros can be used to print styled text to terminals that support ANSI
- * escape codes.
- */
-
-/** @brief ANSI escape code for bright red text. */
-#define XDBG_ANSI_RED "\x1b[91m"
-
-/** @brief ANSI escape code for bright green text. */
-#define XDBG_ANSI_GREEN "\x1b[92m"
-
-/** @brief ANSI escape code for bright yellow text. */
-#define XDBG_ANSI_YELLOW "\x1b[93m"
-
-/** @brief ANSI escape code for bright blue text. */
-#define XDBG_ANSI_BLUE "\x1b[94m"
-
-/** @brief ANSI escape code for bright magenta text. */
-#define XDBG_ANSI_MAGENTA "\x1b[95m"
-
-/** @brief ANSI escape code for bright cyan text. */
-#define XDBG_ANSI_CYAN "\x1b[96m"
-
-/** @brief ANSI escape code for italic text. */
-#define XDBG_ANSI_ITALIC "\x1b[3m"
-
-/** @brief ANSI escape code for bold text. */
-#define XDBG_ANSI_BOLD "\x1b[1m"
-
-/** @brief ANSI escape code to reset all text styles. */
-#define XDBG_ANSI_RESET "\x1b[0m"
-
-/*****************************************************************************/
-/*                                                                           */
-/*                            ENABLE XDBG                                    */
-/*                                                                           */
-/*****************************************************************************/
+#if defined(DEBUG) || defined(_DEBUG)
+#define XDBG_ENABLE
+#endif // defined(DEBUG) || defined(_DEBUG)
 
 #ifndef XDBG_ENABLE
 /*#define XDBG_ENABLE*/
 #endif // XDBG_ENABLE
 
-/*----------------------------------------------------------
- * Convenience Macros
- * These automatically capture file, line, and function info
- *----------------------------------------------------------*/
+
+/*****************************************************************************/
+/*                                                                    MACROS */
+/*****************************************************************************/
+
 #ifdef XDBG_ENABLE
 /*#define malloc(size) xdbg_malloc(size, __FILE__, __LINE__, __func__)*/
 /*#define realloc(size) xdbg_realloc(pointer,size, __FILE__, __LINE__,
@@ -111,9 +68,7 @@ extern "C" {
 #endif // XDBG_ENABLE
 
 /*****************************************************************************/
-/*                                                                           */
-/*                           DEBUG MEMORY                                    */
-/*                                                                           */
+/*                                                                       API */
 /*****************************************************************************/
 
 /**
@@ -216,6 +171,7 @@ extern void xdbg_check_integrity(void); // TODO: Implement
  * Useful for test environments where tracking needs to be cleared between test
  * cases.
  */
+extern void xdbg_reset_memory_tracker(void); // TODO: Implement
 
 #ifdef __cplusplus
 }
