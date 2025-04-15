@@ -1,17 +1,11 @@
-/*
- * Filename: xdbg.c
- * Description: Implementation file for the xdbg memory debugging library.
- * Author: Ragib Asif
- * Created: 2025-03-28
- * License: MIT
- */
+// xdbg.c
 
 #include "xdbg.h"
 
-// #define XDLOG_PRINT
+// #define XDLOG_PRINT // enables printf and fprintf macros
 #include "xdlog.h"
 
-#define IMD_MEMORY_DEBUG
+#define IMD_MEMORY_DEBUG // enables the internal memory debugger
 #include "imd.h"
 
 static void xdbg_internal_alloc_check(void *pointer, const char *file,
@@ -271,7 +265,7 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
 void xdbg_report(const char *file, unsigned int line, const char *function) {
     xdbg_init_check(file, line, function);
     putchar('\n');
-    printf("XDBG Memory Report\n");
+    printf("== XDBG Memory Report ==\n");
     struct xdbg_allocated_pointer *show_all_pointers_head =
         allocated_pointer_head;
     while (show_all_pointers_head != NULL) {
@@ -288,16 +282,16 @@ void xdbg_init(const char *file, unsigned int line, const char *function) {
         fprintf(stderr, "XDGB_INIT() was already called.\n");
         exit(EXIT_FAILURE);
     }
-    printf("Initializing XDBG.\n");
+    printf("== Initializing XDBG. ==\n");
     allocated_pointer_head = NULL;
     allocated_pointer_tail = NULL;
     isXDBGinitialized = true;
-    printf("XDBG Initialized.\n");
+    printf("== XDBG Initialized. ==\n");
 }
 
 void xdbg_clear(const char *file, unsigned int line, const char *function) {
     xdbg_init_check(file, line, function);
-    printf("Clearing XDBG.\n");
+    printf("== Clearing XDBG. ==\n");
     struct xdbg_allocated_pointer *allocated_pointer_clear =
         allocated_pointer_head;
     while (allocated_pointer_clear != NULL) {
@@ -307,21 +301,21 @@ void xdbg_clear(const char *file, unsigned int line, const char *function) {
         allocated_pointer_clear = allocated_pointer_next;
     }
     isXDBGinitialized = false;
-    printf("XDBG Cleared.\n");
+    printf("== XDBG Cleared. ==\n");
 }
 
-// TODO
+// TODO:
 void xdbg_report_leaks(void) {
     // Traverse linked list of allocations and print unfreed ones
 }
 
-// TODO
+// TODO:
 void xdbg_check_integrity(void) {
     // For each item in linked list, check it's in hash table and vice versa
     // Ensure no double entries, check sizes/metadata
 }
 
-// TODO
+// TODO:
 void xdbg_reset_tracking(void) {
     // Frees all internal tracking structures (not user allocations!)
     // For testing purposes only

@@ -1,10 +1,4 @@
-/*
- * Filename: xdbg.h
- * Description: Header file for the xdbg memory debugging library.
- * Author: Ragib Asif
- * Created: 2025-03-28
- * License: MIT
- */
+// xdbg.h
 
 #ifndef __XDBG_H__
 #define __XDBG_H__
@@ -23,7 +17,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
-
 
 /*****************************************************************************/
 /*                                                                  INCLUDES */
@@ -46,7 +39,6 @@ extern "C" {
 #ifndef XDBG_ENABLE
 /*#define XDBG_ENABLE*/
 #endif // XDBG_ENABLE
-
 
 /*****************************************************************************/
 /*                                                                    MACROS */
