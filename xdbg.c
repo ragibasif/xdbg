@@ -31,9 +31,10 @@ static inline void xdbg_initialize_check(const char *file,
 struct xdbg_allocation_record {
     unsigned int total_allocations;
     unsigned int total_frees;
+    unsigned int total_bytes;
 };
 
-struct xdbg_allocation_record allocation_record = {0, 0};
+struct xdbg_allocation_record allocation_record = {0, 0, 0};
 
 enum memory_function_type {
     MEMORY_FUNCTION_MALLOC,
@@ -105,7 +106,6 @@ xdbg_internal_pointer_print_format(struct xdbg_allocated_pointer *pointer) {
 
     printf("[Pointer Freed] %s%s%s%s\n", XDLOG_ANSI_BLUE, XDLOG_ANSI_BOLD,
            (pointer->freed ? "true" : "false"), XDLOG_ANSI_RESET);
-    // printf("%s", x?"true":"false");
 }
 
 void *xdbg_malloc(size_t size, const char *file, unsigned int line,
@@ -134,6 +134,7 @@ void *xdbg_malloc(size_t size, const char *file, unsigned int line,
         allocated_pointer_tail = allocated_pointer_tail->next;
     }
     allocation_record.total_allocations++;
+    allocation_record.total_bytes += size;
     return pointer;
 }
 
@@ -164,6 +165,7 @@ void *xdbg_calloc(size_t number, size_t size, const char *file,
         allocated_pointer_tail = allocated_pointer_tail->next;
     }
     allocation_record.total_allocations++;
+    allocation_record.total_bytes += size;
     return pointer;
 }
 
@@ -227,7 +229,8 @@ static void xdbg_check_freed_pointer(void *pointer) {
     for (i = 0; i < MAX_BUFFER_SIZE; i++) {
         if (xdbg_freed_pointer[i].pointer == pointer) {
             fprintf(stderr,
-                    "Attempted to free already freed pointer. %p was freed in "
+                    "MEMORY ERROR: Attempted to free already freed pointer. %p "
+                    "was freed in "
                     "file %s, on line %u, within function %s.\n",
                     pointer, xdbg_freed_pointer[i].file,
                     xdbg_freed_pointer[i].line, xdbg_freed_pointer[i].function);
@@ -288,6 +291,9 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
         putchar('\n');
         show_all_pointers_head = show_all_pointers_next;
     }
+    printf("[Total Allocations]: %u\n[Total Frees]: %u\n[Total Bytes]: %u\n",
+           allocation_record.total_allocations, allocation_record.total_frees,
+           allocation_record.total_bytes);
 }
 
 void xdbg_initialize(const char *file, unsigned int line,
@@ -321,12 +327,6 @@ void xdbg_finalize(const char *file, unsigned int line, const char *function) {
 // TODO:
 void xdbg_report_leaks(void) {
     // Traverse linked list of allocations and print unfreed ones
-}
-
-// TODO:
-void xdbg_check_integrity(void) {
-    // For each item in linked list, check it's in hash table and vice versa
-    // Ensure no double entries, check sizes/metadata
 }
 
 // TODO:
@@ -555,14 +555,21 @@ static void test_realloc(void) {
 int main(void) {
 
     XDBG_INITIALIZE();
-    int *x = xdbg_malloc(10 * sizeof(*x), __FILE__, __LINE__, __func__);
-    x[0] = 1000;
-    x[3] = 1000;
-    x[2] = 1000;
-    xdbg_free(x, __FILE__, __LINE__, __func__);
-    xdbg_free(x, __FILE__, __LINE__, __func__);
+    int *a = xdbg_malloc(10 * sizeof(*a), __FILE__, __LINE__, __func__);
+    int *b = xdbg_malloc(10 * sizeof(*b), __FILE__, __LINE__, __func__);
+    int *c = xdbg_malloc(10 * sizeof(*c), __FILE__, __LINE__, __func__);
+    int *d = xdbg_malloc(10 * sizeof(*d), __FILE__, __LINE__, __func__);
+    int *e = xdbg_malloc(10 * sizeof(*e), __FILE__, __LINE__, __func__);
+    a[0] = 1000;
+    e[3] = 1000;
+    c[2] = 1000;
+    xdbg_free(a, __FILE__, __LINE__, __func__);
+    xdbg_free(b, __FILE__, __LINE__, __func__);
+    xdbg_free(c, __FILE__, __LINE__, __func__);
+    xdbg_free(d, __FILE__, __LINE__, __func__);
+    xdbg_free(e, __FILE__, __LINE__, __func__);
     // free(x);
-    x = NULL;
+    a = NULL;
 
     // test_malloc();
     // test_free();

@@ -23,10 +23,10 @@
 - [ ] Implement hash table to detect double frees.
 - [ ] Add canary values before/after blocks to detect memory corruption
 - [ ] Add documentation (with doxygen?)
-- [ ] Handle double frees
+- [x] Handle double frees
 - [ ] Handle out of bounds pointer frees
 - [ ] Add thread safety
-- [ ] Add checks to match allocation and freeing of individual pointers by their address
+- [x] Add checks to match allocation and freeing of individual pointers by their address
 - [ ] Add stack tracing (_maybe_)
 
 ## Usage

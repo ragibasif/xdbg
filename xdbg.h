@@ -37,7 +37,7 @@ extern "C" {
 #endif // defined(DEBUG) || defined(_DEBUG)
 
 #ifndef XDBG_ENABLE
-/*#define XDBG_ENABLE*/
+// #define XDBG_ENABLE
 #endif // XDBG_ENABLE
 
 /*****************************************************************************/
@@ -148,14 +148,6 @@ extern void xdbg_free(void *pointer, const char *file, unsigned int line,
  * Prints detailed information about memory leaks.
  */
 extern void xdbg_report_leaks(void); // TODO: Implement
-
-/**
- * @brief Validates the internal integrity of the memory tracking system.
- *
- * Checks consistency between internal data structures (e.g., linked list ↔ hash
- * map).
- */
-extern void xdbg_check_integrity(void); // TODO: Implement
 
 /**
  * @brief Resets all memory tracking state.
