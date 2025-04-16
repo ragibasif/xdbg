@@ -37,7 +37,7 @@ extern "C" {
 #endif // defined(DEBUG) || defined(_DEBUG)
 
 #ifndef XDBG_ENABLE
-/*#define XDBG_ENABLE*/
+// #define XDBG_ENABLE
 #endif // XDBG_ENABLE
 
 /*****************************************************************************/
@@ -50,13 +50,13 @@ extern "C" {
  * __func__)*/
 /*#define calloc(size) xdbg_calloc(number,size, __FILE__, __LINE__, __func__)*/
 /*#define free(pointer) xdbg_free(pointer, __FILE__, __LINE__, __func__)*/
-#define XDBG_INIT() xdbg_init(__FILE__, __LINE__, __func__)
+#define XDBG_INITIALIZE() xdbg_initialize(__FILE__, __LINE__, __func__)
 #define XDBG_REPORT() xdbg_report(__FILE__, __LINE__, __func__)
-#define XDBG_CLEAR() xdbg_clear(__FILE__, __LINE__, __func__)
+#define XDBG_FINALIZE() xdbg_finalize(__FILE__, __LINE__, __func__)
 #else
-#define XDBG_INIT()
+#define XDBG_INITIALIZE()
 #define XDBG_REPORT()
-#define XDBG_CLEAR()
+#define XDBG_FINALIZE()
 #endif // XDBG_ENABLE
 
 /*****************************************************************************/
@@ -70,8 +70,8 @@ extern "C" {
  * @param line The line number of the call site (use __LINE__).
  * @param function The function name of the caller (use __func__).
  */
-extern void xdbg_init(const char *file, unsigned int line,
-                      const char *function);
+extern void xdbg_initialize(const char *file, unsigned int line,
+                            const char *function);
 
 /**
  * @brief Clears all memory tracking information.
@@ -80,8 +80,8 @@ extern void xdbg_init(const char *file, unsigned int line,
  * @param line The line number of the call site.
  * @param function The function name of the caller.
  */
-extern void xdbg_clear(const char *file, unsigned int line,
-                       const char *function);
+extern void xdbg_finalize(const char *file, unsigned int line,
+                          const char *function);
 
 /**
  * @brief Reports currently tracked allocations.
@@ -148,14 +148,6 @@ extern void xdbg_free(void *pointer, const char *file, unsigned int line,
  * Prints detailed information about memory leaks.
  */
 extern void xdbg_report_leaks(void); // TODO: Implement
-
-/**
- * @brief Validates the internal integrity of the memory tracking system.
- *
- * Checks consistency between internal data structures (e.g., linked list ↔ hash
- * map).
- */
-extern void xdbg_check_integrity(void); // TODO: Implement
 
 /**
  * @brief Resets all memory tracking state.

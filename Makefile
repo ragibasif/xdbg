@@ -5,7 +5,7 @@ RESET=\033[0m
 
 
 CC := gcc
-DEBUG_CFLAGS += -Wall -Wextra -O0 -g -pedantic -DDEBUG -DXDBG_ENABLE
+DEBUG_CFLAGS += -Wall -Wextra -O0 -g3 -pedantic -DDEBUG -DXDBG_ENABLE
 RELEASE_CFLAGS := -O3 -DNDEBUG
 COMMON_CFLAGS := -std=c99
 CFLAGS := $(DEBUG_CFLAGS)
