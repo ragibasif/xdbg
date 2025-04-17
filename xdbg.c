@@ -306,7 +306,15 @@ xdbg_internal_pointer_print_format(struct xdbg_allocated_pointer *pointer) {
 void xdbg_report(const char *file, unsigned int line, const char *function) {
     xdbg_initialize_check(file, line, function);
     putchar('\n');
-    printf("== XDBG Memory Report ==\n");
+    printf(
+        "[%s%sSUCCESS%s] XDBG memory report called in file %s%s%s%s, on line "
+        "%s%s%u%s, within function %s%s%s%s.\n",
+        XDBG_ANSI_GREEN, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+        XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+        XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+        XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+    putchar('\n');
+
     struct xdbg_allocated_pointer *show_all_pointers_head =
         allocated_pointer_head;
     while (show_all_pointers_head != NULL) {
@@ -331,20 +339,41 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
 
 void xdbg_initialize(const char *file, unsigned int line,
                      const char *function) {
+    putchar('\n');
+    printf("[%s%sWARNING%s] XDBG initializing in file %s%s%s%s, on line "
+           "%s%s%u%s, within function %s%s%s%s.\n",
+           XDBG_ANSI_YELLOW, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+    putchar('\n');
+
     if (isXDBGinitialized) {
         fprintf(stderr, "XDGB_initialize() was already called.\n");
         exit(EXIT_FAILURE);
     }
-    printf("== Initializing XDBG. ==\n");
     allocated_pointer_head = NULL;
     allocated_pointer_tail = NULL;
     isXDBGinitialized = true;
-    printf("== XDBG Initialized. ==\n");
+    putchar('\n');
+    printf("[%s%sSUCCESS%s] XDBG initialized in file %s%s%s%s, on line "
+           "%s%s%u%s, within function %s%s%s%s.\n",
+           XDBG_ANSI_GREEN, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+    putchar('\n');
 }
 
 void xdbg_finalize(const char *file, unsigned int line, const char *function) {
+    printf("[%s%sWARNING%s] XDBG finalizing in file %s%s%s%s, on line "
+           "%s%s%u%s, within function %s%s%s%s.\n",
+           XDBG_ANSI_YELLOW, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+    putchar('\n');
     xdbg_initialize_check(file, line, function);
-    printf("== Finalizing XDBG. ==\n");
     struct xdbg_allocated_pointer *allocated_pointer_finalize =
         allocated_pointer_head;
     while (allocated_pointer_finalize != NULL) {
@@ -354,7 +383,14 @@ void xdbg_finalize(const char *file, unsigned int line, const char *function) {
         allocated_pointer_finalize = allocated_pointer_next;
     }
     isXDBGinitialized = false;
-    printf("== XDBG Finalized. ==\n");
+    putchar('\n');
+    printf("[%s%sSUCCESS%s] XDBG finalized in file %s%s%s%s, on line "
+           "%s%s%u%s, within function %s%s%s%s.\n",
+           XDBG_ANSI_GREEN, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+           XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+    putchar('\n');
 }
 
 // TODO:
