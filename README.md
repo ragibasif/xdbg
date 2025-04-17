@@ -33,6 +33,7 @@
 
 ## TODO
 
+- [ ] Add flags to enable/disable verbosity
 - [ ] Implement hash table to detect double frees.
 - [ ] Add canary values before/after blocks to detect memory corruption
 - [ ] Add documentation
