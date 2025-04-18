@@ -1,5 +1,18 @@
 # XDBG
 
+```
+/* ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' */
+/*                                                                           */
+/*                       ██╗  ██╗██████╗ ██████╗  ██████╗                    */
+/*                       ╚██╗██╔╝██╔══██╗██╔══██╗██╔════╝                    */
+/*                        ╚███╔╝ ██║  ██║██████╔╝██║  ███╗                   */
+/*                        ██╔██╗ ██║  ██║██╔══██╗██║   ██║                   */
+/*                       ██╔╝ ██╗██████╔╝██████╔╝╚██████╔╝                   */
+/*                       ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝                    */
+/*                                                                           */
+/* ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' */
+```
+
 `xdbg` is a debugger for dynamically allocated memory that tracks and logs every `malloc`, `realloc`, `calloc`, and `free` and displays them to standard output to help find memory leaks, memory corruption, overflows.
 
 > [!note]
@@ -20,13 +33,14 @@
 
 ## TODO
 
+- [ ] Add flags to enable/disable verbosity
 - [ ] Implement hash table to detect double frees.
 - [ ] Add canary values before/after blocks to detect memory corruption
-- [ ] Add documentation (with doxygen?)
+- [ ] Add documentation
 - [x] Handle double frees
 - [ ] Handle out of bounds pointer frees
 - [ ] Add thread safety
-- [x] Add checks to match allocation and freeing of individual pointers by their address
+- [ ] Add checks to match allocation and freeing of individual pointers by their address
 - [ ] Add stack tracing (_maybe_)
 
 ## Usage

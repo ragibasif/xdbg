@@ -23,6 +23,7 @@ extern "C" {
 /*****************************************************************************/
 
 #include <ctype.h>   // size_t
+#include <stdarg.h>  // va_list, va_start, va_end, __VA_ARGS__
 #include <stdbool.h> // true, false, bool
 #include <stdio.h> // Includes the standard I/O library for functions like `printf`
 #include <stdlib.h> // Includes the standard library for functions like `malloc`, `free`, and `realloc`.
@@ -45,11 +46,12 @@ extern "C" {
 /*****************************************************************************/
 
 #ifdef XDBG_ENABLE
-/*#define malloc(size) xdbg_malloc(size, __FILE__, __LINE__, __func__)*/
-/*#define realloc(size) xdbg_realloc(pointer,size, __FILE__, __LINE__,
- * __func__)*/
-/*#define calloc(size) xdbg_calloc(number,size, __FILE__, __LINE__, __func__)*/
-/*#define free(pointer) xdbg_free(pointer, __FILE__, __LINE__, __func__)*/
+// #define malloc(size) xdbg_malloc(size, __FILE__, __LINE__, __func__)
+// #define realloc(size) xdbg_realloc(pointer,size, __FILE__, __LINE__,
+// __func__) #define calloc(size) xdbg_calloc(number,size, __FILE__, __LINE__,
+// __func__) #define free(pointer) xdbg_free(pointer, __FILE__, __LINE__,
+// __func__)
+// #define printf(...) xdbg_printf(__FILE__, __LINE__, __func__, __VA_ARGS__)
 #define XDBG_INITIALIZE() xdbg_initialize(__FILE__, __LINE__, __func__)
 #define XDBG_REPORT() xdbg_report(__FILE__, __LINE__, __func__)
 #define XDBG_FINALIZE() xdbg_finalize(__FILE__, __LINE__, __func__)
@@ -58,6 +60,16 @@ extern "C" {
 #define XDBG_REPORT()
 #define XDBG_FINALIZE()
 #endif // XDBG_ENABLE
+
+#define XDBG_ANSI_RED "\x1b[0;91m"
+#define XDBG_ANSI_GREEN "\x1b[0;92m"
+#define XDBG_ANSI_YELLOW "\x1b[0;93m"
+#define XDBG_ANSI_BLUE "\x1b[0;94m"
+#define XDBG_ANSI_MAGENTA "\x1b[0;95m"
+#define XDBG_ANSI_CYAN "\x1b[0;96m"
+#define XDBG_ANSI_ITALIC "\x1b[3m"
+#define XDBG_ANSI_BOLD "\x1b[1m"
+#define XDBG_ANSI_RESET "\x1b[0m"
 
 /*****************************************************************************/
 /*                                                                       API */
@@ -156,6 +168,9 @@ extern void xdbg_report_leaks(void); // TODO: Implement
  * cases.
  */
 extern void xdbg_reset_memory_tracker(void); // TODO: Implement
+
+extern void xdbg_printf(const char *file, unsigned int line,
+                        const char *function, const char *format, ...);
 
 #ifdef __cplusplus
 }
