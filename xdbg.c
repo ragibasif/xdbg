@@ -73,7 +73,18 @@ size_t xdbg_freed_pointer_index = 0;
 void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                   const char *function) {
     xdbg_initialize_check(file, line, function);
-
+    if (size < 0 || size >= SIZE_MAX) {
+        fprintf(stderr,
+                "[%s%sERROR%s] Allocation size of %s%lu%s bytes exceeds memory "
+                "limit in "
+                "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
+                XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
+                size, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, file,
+                XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, line,
+                XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, function,
+                XDBG_ANSI_RESET);
+        return NULL;
+    }
     void *pointer = malloc(size);
     xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
     struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
@@ -131,28 +142,10 @@ void *xdbg_calloc(size_t number, size_t size, const char *file,
     return pointer;
 }
 
+// TODO: rewrite realloc
 void *xdbg_realloc(void *pointer, size_t size, const char *file,
                    unsigned int line, const char *function) {
     xdbg_initialize_check(file, line, function);
-
-    // FIXME: not tracking correctly
-
-    // if (!pointer) {
-    //   return xdbg_malloc(size, __FILE__, __LINE__, __func__);
-    // } else if (size == 0) {
-    //   xdbg_free(pointer, __FILE__, __LINE__, __func__);
-    //   return NULL;
-    // }
-
-    if (size == 0) {
-        allocation_record.total_frees++;
-    }
-    if (pointer == NULL) {
-        allocation_record.total_allocations++;
-    } else {
-        // allocation_record.total_allocations++;
-        // allocation_record.total_frees++;
-    }
 
     pointer = realloc(pointer, size);
     if (size == 0 && pointer != NULL)
@@ -172,6 +165,24 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
     curr->next = NULL;
     curr->freed = false;
 
+    // FIXME: not tracking correctly
+
+    // if (!pointer) {
+    //   return xdbg_malloc(size, __FILE__, __LINE__, __func__);
+    // } else if (size == 0) {
+    //   xdbg_free(pointer, __FILE__, __LINE__, __func__);
+    //   return NULL;
+    // }
+
+    if (size == 0 && !pointer) {
+        allocation_record.total_frees++;
+    } else if (pointer == NULL) {
+        allocation_record.total_allocations++;
+    } else {
+        // allocation_record.total_allocations++;
+        // allocation_record.total_frees++;
+    }
+
     if (allocated_pointer_head == NULL) {
         allocated_pointer_head = curr;
         allocated_pointer_tail = allocated_pointer_head;
@@ -182,30 +193,9 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
     return pointer;
 }
 
-// #define MAX_BUFFER_SIZE
-// struct xdbg_freed_pointer_info *xdbg_freed_pointer[MAX_BUFFER_SIZE];
-// size_t xdbg_freed_pointer_index = 0;
-
-// error - bold red
-// success - bold green
-// warning - bold yellow
-// ptr - blue
-// file,line,func - cyan
-/*fprintf(stderr, "[%s%sERROR%s] Attempted to free already freed
- * pointer. %s%p%s " "was freed in " "file %s%s%s, on line %s%u%s, within
- * function %s%s%s.\n", pointer, xdbg_freed_pointer[i].file,
- * xdbg_freed_pointer[i].line, xdbg_freed_pointer[i].function);
- *                   */
-
-// prefix - bold magenta
-/* printf("[%sCall Location%s] %s%sfile: %s, line: %u, function: %s%s\n",
- * XDLOG_ANSI_CYAN, XDLOG_ANSI_ITALIC, pointer->file, pointer->line,
- * pointer->function, XDLOG_ANSI_RESET);
- * */
-
 static void xdbg_check_freed_pointer(void *pointer) {
     size_t i;
-    for (i = 0; i < MAX_BUFFER_SIZE; i++) {
+    for (i = 0; i < xdbg_freed_pointer_index; i++) {
         if (xdbg_freed_pointer[i].pointer == pointer) {
             fprintf(
                 stderr,
@@ -241,6 +231,15 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
     curr->next = NULL;
     curr->freed = true;
     if (pointer != NULL) {
+        printf("[%s%sSUCCESS%s] Pointer %s%p%s "
+               "was freed in "
+               "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
+               XDBG_ANSI_GREEN, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
+               (void *)pointer, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+               XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+               XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+               XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+
         struct xdbg_freed_pointer_info freed_pointer;
         freed_pointer.pointer = pointer;
         freed_pointer.file = file;
@@ -249,6 +248,14 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
         xdbg_freed_pointer[xdbg_freed_pointer_index++] = freed_pointer;
         free(pointer);
         pointer = NULL;
+    } else {
+        printf("[%s%sWARNING%s] Pointer %s%p%s was freed in file "
+               "%s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
+               XDBG_ANSI_YELLOW, XDBG_ANSI_BOLD, XDBG_ANSI_RESET,
+               XDBG_ANSI_BLUE, (void *)pointer, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+               XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+               XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+               XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
     }
 
     if (allocated_pointer_head == NULL) {
@@ -424,26 +431,8 @@ static void test_free(void);
 int main(void) {
 
     XDBG_INITIALIZE();
+
     int *a = xdbg_malloc(10 * sizeof(*a), __FILE__, __LINE__, __func__);
-
-    printf("[%s%sSUCCESS%s] Pointer %s%p%s "
-           "was allocated in "
-           "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-           XDBG_ANSI_GREEN, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
-           (void *)a, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
-           __FILE__, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
-           __LINE__, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
-           __func__, XDBG_ANSI_RESET);
-
-    printf("[%s%sWARNING%s] Pointer %s%p%s "
-           "was allocated in "
-           "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-           XDBG_ANSI_YELLOW, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
-           (void *)a, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
-           __FILE__, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
-           __LINE__, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
-           __func__, XDBG_ANSI_RESET);
-
     int *b = xdbg_malloc(10 * sizeof(*b), __FILE__, __LINE__, __func__);
     int *c = xdbg_malloc(10 * sizeof(*c), __FILE__, __LINE__, __func__);
     int *d = xdbg_malloc(10 * sizeof(*d), __FILE__, __LINE__, __func__);
@@ -456,10 +445,10 @@ int main(void) {
     xdbg_free(c, __FILE__, __LINE__, __func__);
     xdbg_free(d, __FILE__, __LINE__, __func__);
     xdbg_free(e, __FILE__, __LINE__, __func__);
-    // free(x);
     a = NULL;
+    xdbg_free(a, __FILE__, __LINE__, __func__);
 
-    // test_malloc();
+    test_malloc();
     // test_free();
     // test_realloc();
     // test_calloc();
