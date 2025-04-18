@@ -83,7 +83,8 @@ void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                 XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, line,
                 XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, function,
                 XDBG_ANSI_RESET);
-        return NULL;
+        // return NULL; // for testing
+        exit(EXIT_FAILURE);
     }
     void *pointer = malloc(size);
     xdbg_internal_alloc_check(pointer, __FILE__, __LINE__, __func__);
@@ -207,7 +208,8 @@ static void xdbg_check_freed_pointer(void *pointer) {
                 XDBG_ANSI_ITALIC, xdbg_freed_pointer[i].line, XDBG_ANSI_RESET,
                 XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
                 xdbg_freed_pointer[i].function, XDBG_ANSI_RESET);
-            exit(EXIT_FAILURE);
+            return; // for testing
+            // exit(EXIT_FAILURE);
         }
     }
 }
@@ -249,10 +251,10 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
         free(pointer);
         pointer = NULL;
     } else {
-        printf("[%s%sWARNING%s] Pointer %s%p%s was freed in file "
+        printf("[%s%sSUCCESS%s] Pointer %s%p%s was freed in file "
                "%s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-               XDBG_ANSI_YELLOW, XDBG_ANSI_BOLD, XDBG_ANSI_RESET,
-               XDBG_ANSI_BLUE, (void *)pointer, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
+               XDBG_ANSI_GREEN, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
+               (void *)pointer, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
                XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
                XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
                XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
@@ -432,24 +434,22 @@ int main(void) {
 
     XDBG_INITIALIZE();
 
-    int *a = xdbg_malloc(10 * sizeof(*a), __FILE__, __LINE__, __func__);
-    int *b = xdbg_malloc(10 * sizeof(*b), __FILE__, __LINE__, __func__);
-    int *c = xdbg_malloc(10 * sizeof(*c), __FILE__, __LINE__, __func__);
-    int *d = xdbg_malloc(10 * sizeof(*d), __FILE__, __LINE__, __func__);
-    int *e = xdbg_malloc(10 * sizeof(*e), __FILE__, __LINE__, __func__);
-    a[0] = 1000;
-    e[3] = 1000;
-    c[2] = 1000;
-    xdbg_free(a, __FILE__, __LINE__, __func__);
-    xdbg_free(b, __FILE__, __LINE__, __func__);
-    xdbg_free(c, __FILE__, __LINE__, __func__);
-    xdbg_free(d, __FILE__, __LINE__, __func__);
-    xdbg_free(e, __FILE__, __LINE__, __func__);
-    a = NULL;
-    xdbg_free(a, __FILE__, __LINE__, __func__);
+    // int *a = xdbg_malloc(10 * sizeof(*a), __FILE__, __LINE__, __func__);
+    // int *b = xdbg_malloc(10 * sizeof(*b), __FILE__, __LINE__, __func__);
+    // int *c = xdbg_malloc(10 * sizeof(*c), __FILE__, __LINE__, __func__);
+    // int *d = xdbg_malloc(10 * sizeof(*d), __FILE__, __LINE__, __func__);
+    // int *e = xdbg_malloc(10 * sizeof(*e), __FILE__, __LINE__, __func__);
+    // a[0] = 1000;
+    // e[3] = 1000;
+    // c[2] = 1000;
+    // xdbg_free(a, __FILE__, __LINE__, __func__);
+    // xdbg_free(b, __FILE__, __LINE__, __func__);
+    // xdbg_free(c, __FILE__, __LINE__, __func__);
+    // xdbg_free(d, __FILE__, __LINE__, __func__);
+    // xdbg_free(e, __FILE__, __LINE__, __func__);
 
-    test_malloc();
-    // test_free();
+    // test_malloc(); // PASSED
+    test_free();
     // test_realloc();
     // test_calloc();
 
