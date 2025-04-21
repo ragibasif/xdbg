@@ -24,9 +24,6 @@
 - [ ] Implement hash table to detect double frees.
 - [ ] Add canary values before/after blocks to detect memory corruption
 - [ ] Add documentation
-- [x] Handle double frees
-- [x] Handle out of bounds pointer frees
-- [x] Handle unallocated pointer frees
 - [ ] Add thread safety
 - [ ] Add checks to match allocation and freeing of individual pointers by their address
 - [ ] Add stack tracing (_maybe_)

@@ -16,8 +16,8 @@ else
 	CFLAGS := $(COMMON_CFLAGS) $(DEBUG_CFLAGS)
 endif
 
-LDFLAGS :=
-LIBS =
+LDFLAGS := -lc
+# LIBS =
 
 EXECUTABLE := xdbg
 SRCS := $(wildcard *.c)
