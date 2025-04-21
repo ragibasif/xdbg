@@ -1,5 +1,15 @@
 // xdbg.h
 
+//
+// TODO: Add flags to enable/disable verbosity
+// TODO: Implement hash table to detect double frees.
+// TODO: Add canary values before/after blocks to detect memory corruption
+// TODO: Add documentation
+// TODO: Add thread safety
+// TODO: Add checks to match allocation and freeing of individual pointers by
+// their address
+// TODO: Add stack tracing (_maybe_)
+
 #ifndef __XDBG_H__
 #define __XDBG_H__
 

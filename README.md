@@ -7,7 +7,7 @@
 
 > [!warning]
 >
-> - RIDDLED WITH BUGS!!!
+> - **WIP!**
 > - **NOT THREAD SAFE!** (_yet_)
 > - Exclusively developed and tested on MacOS M1 (_for now_)
 
@@ -17,16 +17,6 @@
 - Track the file, line, and function where memory was allocated.
 - Logs and reports each action: `malloc`, `realloc`, `calloc`, and `free`.
 - Uses a linked lists to maintain order of allocation.
-
-## TODO
-
-- [ ] Add flags to enable/disable verbosity
-- [ ] Implement hash table to detect double frees.
-- [ ] Add canary values before/after blocks to detect memory corruption
-- [ ] Add documentation
-- [ ] Add thread safety
-- [ ] Add checks to match allocation and freeing of individual pointers by their address
-- [ ] Add stack tracing (_maybe_)
 
 ## Usage
 
