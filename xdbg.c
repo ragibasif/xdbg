@@ -200,7 +200,7 @@ static void xdbg_check_freed_pointer(void *pointer) {
         if (xdbg_freed_pointer[i].pointer == pointer) {
             fprintf(
                 stderr,
-                "[%s%sERROR%s] %s%p%s was freed in "
+                "[%s%sERROR%s] Pointer %s%p%s was already freed in "
                 "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
                 XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
                 pointer, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
@@ -208,21 +208,41 @@ static void xdbg_check_freed_pointer(void *pointer) {
                 XDBG_ANSI_ITALIC, xdbg_freed_pointer[i].line, XDBG_ANSI_RESET,
                 XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
                 xdbg_freed_pointer[i].function, XDBG_ANSI_RESET);
-            return; // for testing
-            // exit(EXIT_FAILURE);
+            // return; // for testing
+            exit(EXIT_FAILURE);
         }
     }
+}
+
+static bool xdbg_check_allocated_pointer(void *pointer) {
+    struct xdbg_allocated_pointer *temp = allocated_pointer_head;
+    while (temp) {
+        if (temp->pointer == pointer)
+            return true;
+        temp = temp->next;
+    }
+    return false;
 }
 
 void xdbg_free(void *pointer, const char *file, unsigned int line,
                const char *function) {
     xdbg_initialize_check(file, line, function);
     xdbg_check_freed_pointer(pointer);
+    if (!xdbg_check_allocated_pointer(pointer)) {
+        fprintf(stderr,
+                "[%s%sERROR%s] Pointer %s%p%s was never allocated and cannot "
+                "be freed in "
+                "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
+                XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
+                pointer, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
+                file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, line,
+                XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, function,
+                XDBG_ANSI_RESET);
+        // return; // for testing
+        exit(EXIT_FAILURE);
+    }
     struct xdbg_allocated_pointer *curr = malloc(sizeof(*curr));
     xdbg_internal_alloc_check(curr, __FILE__, __LINE__, __func__);
-
-    /*FIXME:Invalid free, out-of-bounds detection
-     * currently just seg faults*/
 
     curr->pointer = pointer;
     curr->size = 0;
@@ -447,9 +467,9 @@ int main(void) {
     // xdbg_free(c, __FILE__, __LINE__, __func__);
     // xdbg_free(d, __FILE__, __LINE__, __func__);
     // xdbg_free(e, __FILE__, __LINE__, __func__);
-
+    //
     // test_malloc(); // PASSED
-    test_free();
+    // test_free(); // PASSED
     // test_realloc();
     // test_calloc();
 
