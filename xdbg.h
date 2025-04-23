@@ -13,35 +13,16 @@
 #ifndef __XDBG_H__
 #define __XDBG_H__
 
-/* ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' */
-/*                                                                           */
-/*                       ██╗  ██╗██████╗ ██████╗  ██████╗                    */
-/*                       ╚██╗██╔╝██╔══██╗██╔══██╗██╔════╝                    */
-/*                        ╚███╔╝ ██║  ██║██████╔╝██║  ███╗                   */
-/*                        ██╔██╗ ██║  ██║██╔══██╗██║   ██║                   */
-/*                       ██╔╝ ██╗██████╔╝██████╔╝╚██████╔╝                   */
-/*                       ╚═╝  ╚═╝╚═════╝ ╚═════╝  ╚═════╝                    */
-/*                                                                           */
-/* ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' */
-
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
-/*****************************************************************************/
-/*                                                                  INCLUDES */
-/*****************************************************************************/
-
-#include <ctype.h>   // size_t
-#include <stdarg.h>  // va_list, va_start, va_end, __VA_ARGS__
-#include <stdbool.h> // true, false, bool
-#include <stdio.h> // Includes the standard I/O library for functions like `printf`
-#include <stdlib.h> // Includes the standard library for functions like `malloc`, `free`, and `realloc`.
-#include <string.h> // memcpy
-
-/*****************************************************************************/
-/*                                                                    ENABLE */
-/*****************************************************************************/
+#include <ctype.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if defined(DEBUG) || defined(_DEBUG)
 #define XDBG_ENABLE
@@ -50,10 +31,6 @@ extern "C" {
 #ifndef XDBG_ENABLE
 // #define XDBG_ENABLE
 #endif // XDBG_ENABLE
-
-/*****************************************************************************/
-/*                                                                    MACROS */
-/*****************************************************************************/
 
 #ifdef XDBG_ENABLE
 // #define malloc(size) xdbg_malloc(size, __FILE__, __LINE__, __func__)
@@ -71,6 +48,7 @@ extern "C" {
 #define XDBG_FINALIZE()
 #endif // XDBG_ENABLE
 
+// ANSI escape codes for logging
 #define XDBG_ANSI_RED "\x1b[0;91m"
 #define XDBG_ANSI_GREEN "\x1b[0;92m"
 #define XDBG_ANSI_YELLOW "\x1b[0;93m"
@@ -81,106 +59,51 @@ extern "C" {
 #define XDBG_ANSI_BOLD "\x1b[1m"
 #define XDBG_ANSI_RESET "\x1b[0m"
 
-/*****************************************************************************/
-/*                                                                       API */
-/*****************************************************************************/
-
-/**
- * @brief Initializes the xdbg memory tracker.
- *
- * @param file The source file where this function is called (use __FILE__).
- * @param line The line number of the call site (use __LINE__).
- * @param function The function name of the caller (use __func__).
- */
+// Initializes the xdbg memory tracker and allocates resources. This is
+// the first function that should be called.
 extern void xdbg_initialize(const char *file, unsigned int line,
                             const char *function);
 
-/**
- * @brief Clears all memory tracking information.
- *
- * @param file The source file where this function is called.
- * @param line The line number of the call site.
- * @param function The function name of the caller.
- */
+// Clears all memory tracking information and frees all allocated
+// resources. This should be called at the very end.
 extern void xdbg_finalize(const char *file, unsigned int line,
                           const char *function);
 
-/**
- * @brief Reports currently tracked allocations.
- *
- * @param file The source file where this function is called.
- * @param line The line number of the call site.
- * @param function The function name of the caller.
- */
+// Reports currently tracked allocations along with relevant information such as
+// address, file, line, caller function, memory operations and size.
 extern void xdbg_report(const char *file, unsigned int line,
                         const char *function);
 
-/**
- * @brief Allocates memory and tracks the allocation.
- *
- * @param size The number of bytes to allocate.
- * @param file The source file where this function is called.
- * @param line The line number of the call site.
- * @param function The function name of the caller.
- * @return Pointer to the allocated memory, or NULL on failure.
- */
+// Allocates memory and tracks the allocation.
+// Return pointer to the allocated memory, or NULL on failure.
 extern void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                          const char *function);
 
-/**
- * @brief Allocates zero-initialized memory and tracks the allocation.
- *
- * @param number Number of elements to allocate.
- * @param size Size of each element in bytes.
- * @param file The source file where this function is called.
- * @param line The line number of the call site.
- * @param function The function name of the caller.
- * @return Pointer to the allocated memory, or NULL on failure.
- */
+// Allocates zero-initialized memory and tracks the allocation.
+// Return pointer to the allocated memory, or NULL on failure.
 extern void *xdbg_calloc(size_t number, size_t size, const char *file,
                          unsigned int line, const char *function);
 
-/**
- * @brief Reallocates memory and tracks the new allocation.
- *
- * @param pointer Pointer to the previously allocated memory.
- * @param size New size in bytes.
- * @param file The source file where this function is called.
- * @param line The line number of the call site.
- * @param function The function name of the caller.
- * @return Pointer to the reallocated memory, or NULL on failure.
- */
+// Reallocates memory and tracks the new allocation.
+// Return pointer to the reallocated memory, or NULL on failure.
 extern void *xdbg_realloc(void *pointer, size_t size, const char *file,
                           unsigned int line, const char *function);
 
-/**
- * @brief Frees memory and removes it from the tracking system.
- *
- * @param pointer Pointer to the memory block to free.
- * @param file The source file where this function is called.
- * @param line The line number of the call site.
- * @param function The function name of the caller.
- */
+// Wrapper around free() that tracks valid free operations and reports invalid
+// free operations.
 extern void xdbg_free(void *pointer, const char *file, unsigned int line,
                       const char *function);
 
-/**
- * @brief Reports all memory allocations that were not freed.
- *
- * Prints detailed information about memory leaks.
- */
-extern void xdbg_report_leaks(void); // TODO: Implement
+// TODO: Implement
+// Reports all memory allocations that were not freed.
+// Prints detailed information about memory leaks.
+extern void xdbg_report_leaks(void);
 
-/**
- * @brief Resets all memory tracking state.
- *
- * Useful for test environments where tracking needs to be cleared between test
- * cases.
- */
-extern void xdbg_reset_memory_tracker(void); // TODO: Implement
-
-extern void xdbg_printf(const char *file, unsigned int line,
-                        const char *function, const char *format, ...);
+// TODO: Implement
+// Resets all memory tracking state.
+// Useful for test environments where tracking needs to be cleared between test
+// cases.
+extern void xdbg_reset_memory_tracker(void);
 
 #ifdef __cplusplus
 }
