@@ -31,20 +31,11 @@ struct xdbg_allocation_record {
     unsigned int total_bytes;
 };
 
-struct xdbg_allocation_record allocation_record = {0, 0, 0};
-
-// OPTIMIZE: remove this
-enum memory_function_type {
-    MEMORY_FUNCTION_MALLOC,
-    MEMORY_FUNCTION_REALLOC,
-    MEMORY_FUNCTION_CALLOC,
-    MEMORY_FUNCTION_FREE
-};
+struct xdbg_allocation_record allocation_record;
 
 struct xdbg_allocated_pointer {
     void *pointer;
     size_t size;
-    enum memory_function_type memory_function;
     const char *file;
     unsigned int line;
     const char *function;
@@ -121,7 +112,6 @@ void *xdbg_malloc(size_t size, const char *file, unsigned int line,
 
     curr->pointer = pointer;
     curr->size = size;
-    curr->memory_function = MEMORY_FUNCTION_MALLOC;
     curr->file = file;
     curr->line = line;
     curr->function = function;
@@ -157,7 +147,6 @@ void *xdbg_calloc(size_t number, size_t size, const char *file,
 
     curr->pointer = pointer;
     curr->size = size;
-    curr->memory_function = MEMORY_FUNCTION_CALLOC;
     curr->file = file;
     curr->line = line;
     curr->function = function;
@@ -282,32 +271,9 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
 
 static inline void
 xdbg_internal_pointer_print_format(struct xdbg_allocated_pointer *pointer) {
-    char *memory_function_literal;
-    switch (pointer->memory_function) {
-    case MEMORY_FUNCTION_MALLOC:
-        memory_function_literal = "malloc\0";
-        break;
-    case MEMORY_FUNCTION_CALLOC:
-        memory_function_literal = "calloc\0";
-        break;
-    case MEMORY_FUNCTION_REALLOC:
-        memory_function_literal = "realloc\0";
-        break;
-    case MEMORY_FUNCTION_FREE:
-        memory_function_literal = "free\0";
-        break;
-    default:
-        memory_function_literal = "\0";
-        break;
-    }
-
     printf("[%sCall Location%s] %s%sfile: %s, line: %u, function: %s%s\n",
            XDBG_ANSI_MAGENTA, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
            pointer->file, pointer->line, pointer->function, XDBG_ANSI_RESET);
-
-    printf("[%sMemory Function%s] %s%s%s%s\n", XDBG_ANSI_MAGENTA,
-           XDBG_ANSI_RESET, XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
-           memory_function_literal, XDBG_ANSI_RESET);
 
     printf("[%sPointer Address%s] %s%s%p%s\n", XDBG_ANSI_MAGENTA,
            XDBG_ANSI_RESET, XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
@@ -358,15 +324,7 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
 
 void xdbg_initialize(const char *file, unsigned int line,
                      const char *function) {
-    // memset(&allocation_record, 0, sizeof(allocation_record));
-    putchar('\n');
-    printf("[%s%sWARNING%s] XDBG initializing in file %s%s%s%s, on line "
-           "%s%s%u%s, within function %s%s%s%s.\n",
-           XDBG_ANSI_YELLOW, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-           XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-           XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-           XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
-    putchar('\n');
+    memset(&allocation_record, 0, sizeof(allocation_record));
 
     if (isXDBGinitialized) {
         fprintf(stderr, "XDGB_initialize() was already called.\n");
@@ -386,13 +344,6 @@ void xdbg_initialize(const char *file, unsigned int line,
 }
 
 void xdbg_finalize(const char *file, unsigned int line, const char *function) {
-    printf("[%s%sWARNING%s] XDBG finalizing in file %s%s%s%s, on line "
-           "%s%s%u%s, within function %s%s%s%s.\n",
-           XDBG_ANSI_YELLOW, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-           XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-           XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-           XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
-    putchar('\n');
     xdbg_initialize_check(file, line, function);
     struct xdbg_allocated_pointer *allocated_pointer_finalize =
         allocated_pointer_head;

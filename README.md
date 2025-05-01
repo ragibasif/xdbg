@@ -12,7 +12,7 @@ git clone git@github.com:ragibasif/xdbg.git
 
 Place `xdbg.h` and `xdbg.c` in your project folder and include the header file.
 
-```bash
+```c
 #define XDBG_ENABLE
 #include "xdbg.h"
 ```
