@@ -1,18 +1,22 @@
 # xdbg
 
-`xdbg` is a debugger for dynamically allocated memory that tracks and logs every `malloc`, `realloc`, `calloc`, and `free` and displays them to standard output to help find memory leaks, memory corruption, overflows.
+An extremely minimal memory debugger written in standard C (C99) and uses GNU Make for building. The goal of this project is to provide a very lightweight memory debugging library that can be included in any C project that deals with dynamic memory allocation. It works by defining macros that replace calls to `malloc`, `realloc`, `calloc`, and `free` and tracking and logging them to be able to catch memory leaks.
 
-- Memory Debugging – Detect leaks, corruption, overflows.
-- Minimal Overhead – As light as possible for fast debugging.
-- Toggle debugging
-- Track the file, line, and function where memory was allocated.
-- Logs and reports each action: `malloc`, `realloc`, `calloc`, and `free`.
+## 🛠️ Usage
 
-## Usage
+Clone the repository.
 
-Define `XDBG_ENABLE` and then include `xdbg.h` in one C/C++ source file.
+```bash
+git clone git@github.com:ragibasif/xdbg.git
+```
 
-```c
+Place `xdbg.h` and `xdbg.c` in your project folder and include the header file.
+
+```bash
 #define XDBG_ENABLE
 #include "xdbg.h"
 ```
+
+## 🪪 License
+
+This project is licensed under the **MIT license**. See the [LICENSE](LICENSE) file for details.
