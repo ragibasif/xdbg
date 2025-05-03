@@ -299,9 +299,9 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
         struct xdbg_allocated_pointer *show_all_pointers_next =
             show_all_pointers_head->next;
         xdbg_internal_pointer_print_format(show_all_pointers_head);
-        putchar('\n');
         show_all_pointers_head = show_all_pointers_next;
     }
+    puts("--------------------------------------------------");
     printf("[%sTotal Allocations%s] %s%s%u%s\n", XDBG_ANSI_MAGENTA,
            XDBG_ANSI_RESET, XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
            allocation_record.total_allocations, XDBG_ANSI_RESET);
@@ -311,8 +311,6 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
     printf("[%sTotal Bytes%s] %s%s%u%s\n", XDBG_ANSI_MAGENTA, XDBG_ANSI_RESET,
            XDBG_ANSI_BLUE, XDBG_ANSI_BOLD, allocation_record.total_bytes,
            XDBG_ANSI_RESET);
-
-    putchar('\n');
 }
 
 void xdbg_initialize(const char *file, unsigned int line,
