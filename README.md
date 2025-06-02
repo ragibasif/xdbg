@@ -7,7 +7,7 @@ WIP!
 
 An extremely minimal dynamic memory debugger written in C. The goal of this project is to provide a very lightweight memory debugging library that can be included in any C/C++ project to aid in debugging dynamic memory allocation. It works by defining macros that replace calls to `malloc`, `realloc`, `calloc`, and `free` and tracking and logging them to be able to catch memory leaks.
 
-![](./assets/example.gif)
+![example](./assets/example.gif)
 
 ## Usage
 
@@ -30,8 +30,6 @@ This project is licensed under the **MIT license**. See the [LICENSE](LICENSE)
 file for details.
 
 ## Acknowledgements
-
-This project is inspired by:
 
 - [Rust's dbg macro](https://doc.rust-lang.org/std/macro.dbg.html)
 - [dbg-macro for C++](https://github.com/sharkdp/dbg-macro?tab=readme-ov-file)
