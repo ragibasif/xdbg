@@ -50,6 +50,7 @@ run: $(EXECUTABLE)
 	@make clean
 	@make all
 	@./$(EXECUTABLE)
+	@make clean
 
 help:
 	@echo "${MAGENTA}make help${RESET}"

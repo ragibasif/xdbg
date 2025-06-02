@@ -7,6 +7,7 @@
 extern "C" {
 #endif // __cplusplus
 
+#include "AEC.h"
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -33,17 +34,6 @@ extern "C" {
 #define XDBG_REPORT()
 #define XDBG_FINALIZE()
 #endif // XDBG_ENABLE
-
-// ANSI escape codes for logging
-#define XDBG_ANSI_RED "\x1b[0;91m"
-#define XDBG_ANSI_GREEN "\x1b[0;92m"
-#define XDBG_ANSI_YELLOW "\x1b[0;93m"
-#define XDBG_ANSI_BLUE "\x1b[0;94m"
-#define XDBG_ANSI_MAGENTA "\x1b[0;95m"
-#define XDBG_ANSI_CYAN "\x1b[0;96m"
-#define XDBG_ANSI_ITALIC "\x1b[3m"
-#define XDBG_ANSI_BOLD "\x1b[1m"
-#define XDBG_ANSI_RESET "\x1b[0m"
 
 extern void xdbg_initialize(const char *file, unsigned int line,
                             const char *function);

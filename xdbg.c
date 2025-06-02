@@ -9,10 +9,9 @@ static void xdbg_internal_alloc_check(void *pointer, const char *file,
         fprintf(stderr,
                 "[%s%sERROR%s] Memory allocation failed on "
                 "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-                XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+                AEC_RED, AEC_BOLD, AEC_RESET, AEC_CYAN, AEC_ITALIC, file,
+                AEC_RESET, AEC_CYAN, AEC_ITALIC, line, AEC_RESET, AEC_CYAN,
+                AEC_ITALIC, function, AEC_RESET);
 
         exit(EXIT_FAILURE);
     }
@@ -28,10 +27,9 @@ static inline void xdbg_initialize_check(const char *file,
             stderr,
             "[%s%sERROR%s] Must call XDBG_INITIALIZE() first. Illegal call on "
             "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-            XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-            XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-            XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-            XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+            AEC_RED, AEC_BOLD, AEC_RESET, AEC_CYAN, AEC_ITALIC, file, AEC_RESET,
+            AEC_CYAN, AEC_ITALIC, line, AEC_RESET, AEC_CYAN, AEC_ITALIC,
+            function, AEC_RESET);
 
         exit(EXIT_FAILURE);
     }
@@ -78,10 +76,9 @@ static void xdbg_check_freed_pointer(void *pointer, const char *file,
                 stderr,
                 "[%s%sERROR%s] Double free detected on "
                 "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-                XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+                AEC_RED, AEC_BOLD, AEC_RESET, AEC_CYAN, AEC_ITALIC, file,
+                AEC_RESET, AEC_CYAN, AEC_ITALIC, line, AEC_RESET, AEC_CYAN,
+                AEC_ITALIC, function, AEC_RESET);
             exit(EXIT_FAILURE);
         }
         curr = curr->next;
@@ -103,11 +100,9 @@ void *xdbg_malloc(size_t size, const char *file, unsigned int line,
                 "[%s%sERROR%s] Allocation size of %s%lu%s bytes exceeds memory "
                 "limit in "
                 "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-                XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
-                size, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, file,
-                XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, line,
-                XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, function,
-                XDBG_ANSI_RESET);
+                AEC_RED, AEC_BOLD, AEC_RESET, AEC_BLUE, size, AEC_RESET,
+                AEC_CYAN, AEC_ITALIC, file, AEC_RESET, AEC_CYAN, AEC_ITALIC,
+                line, AEC_RESET, AEC_CYAN, AEC_ITALIC, function, AEC_RESET);
         exit(EXIT_FAILURE);
     }
     pointer = malloc(size);
@@ -209,10 +204,9 @@ void *xdbg_realloc(void *pointer, size_t size, const char *file,
     fprintf(stderr,
             "[%s%sERROR%s] Attempted to realloc an unknown pointer on "
             "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-            XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-            XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-            XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-            XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+            AEC_RED, AEC_BOLD, AEC_RESET, AEC_CYAN, AEC_ITALIC, file, AEC_RESET,
+            AEC_CYAN, AEC_ITALIC, line, AEC_RESET, AEC_CYAN, AEC_ITALIC,
+            function, AEC_RESET);
     exit(EXIT_FAILURE);
 }
 
@@ -263,31 +257,26 @@ void xdbg_free(void *pointer, const char *file, unsigned int line,
             "[%s%sERROR%s] Pointer %s%p%s was never allocated and cannot "
             "be freed in "
             "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-            XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_BLUE,
-            pointer, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, file,
-            XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, line,
-            XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC, function,
-            XDBG_ANSI_RESET);
+            AEC_RED, AEC_BOLD, AEC_RESET, AEC_BLUE, pointer, AEC_RESET,
+            AEC_CYAN, AEC_ITALIC, file, AEC_RESET, AEC_CYAN, AEC_ITALIC, line,
+            AEC_RESET, AEC_CYAN, AEC_ITALIC, function, AEC_RESET);
     exit(EXIT_FAILURE);
 }
 
 static inline void
 xdbg_internal_pointer_print_format(struct xdbg_allocated_pointer *pointer) {
     printf("[%sCall Location%s] %s%sfile: %s, line: %u, function: %s%s\n",
-           XDBG_ANSI_MAGENTA, XDBG_ANSI_RESET, XDBG_ANSI_CYAN, XDBG_ANSI_ITALIC,
-           pointer->file, pointer->line, pointer->function, XDBG_ANSI_RESET);
+           AEC_MAGENTA, AEC_RESET, AEC_CYAN, AEC_ITALIC, pointer->file,
+           pointer->line, pointer->function, AEC_RESET);
 
-    printf("[%sPointer Address%s] %s%s%p%s\n", XDBG_ANSI_MAGENTA,
-           XDBG_ANSI_RESET, XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
-           (void *)pointer->pointer, XDBG_ANSI_RESET);
+    printf("[%sPointer Address%s] %s%s%p%s\n", AEC_MAGENTA, AEC_RESET, AEC_BLUE,
+           AEC_BOLD, (void *)pointer->pointer, AEC_RESET);
 
-    printf("[%sAllocated Bytes%s] %s%s%lu%s\n", XDBG_ANSI_MAGENTA,
-           XDBG_ANSI_RESET, XDBG_ANSI_BLUE, XDBG_ANSI_BOLD, pointer->size,
-           XDBG_ANSI_RESET);
+    printf("[%sAllocated Bytes%s] %s%s%lu%s\n", AEC_MAGENTA, AEC_RESET,
+           AEC_BLUE, AEC_BOLD, pointer->size, AEC_RESET);
 
-    printf("[%sPointer Freed%s] %s%s%s%s\n", XDBG_ANSI_MAGENTA, XDBG_ANSI_RESET,
-           XDBG_ANSI_BLUE, XDBG_ANSI_BOLD, (pointer->freed ? "true" : "false"),
-           XDBG_ANSI_RESET);
+    printf("[%sPointer Freed%s] %s%s%s%s\n", AEC_MAGENTA, AEC_RESET, AEC_BLUE,
+           AEC_BOLD, (pointer->freed ? "true" : "false"), AEC_RESET);
 }
 
 void xdbg_report(const char *file, unsigned int line, const char *function) {
@@ -302,15 +291,12 @@ void xdbg_report(const char *file, unsigned int line, const char *function) {
         show_all_pointers_head = show_all_pointers_next;
     }
     puts("--------------------------------------------------");
-    printf("[%sTotal Allocations%s] %s%s%u%s\n", XDBG_ANSI_MAGENTA,
-           XDBG_ANSI_RESET, XDBG_ANSI_BLUE, XDBG_ANSI_BOLD,
-           allocation_record.total_allocations, XDBG_ANSI_RESET);
-    printf("[%sTotal Frees%s] %s%s%u%s\n", XDBG_ANSI_MAGENTA, XDBG_ANSI_RESET,
-           XDBG_ANSI_BLUE, XDBG_ANSI_BOLD, allocation_record.total_frees,
-           XDBG_ANSI_RESET);
-    printf("[%sTotal Bytes%s] %s%s%u%s\n", XDBG_ANSI_MAGENTA, XDBG_ANSI_RESET,
-           XDBG_ANSI_BLUE, XDBG_ANSI_BOLD, allocation_record.total_bytes,
-           XDBG_ANSI_RESET);
+    printf("[%sTotal Allocations%s] %s%s%u%s\n", AEC_MAGENTA, AEC_RESET,
+           AEC_BLUE, AEC_BOLD, allocation_record.total_allocations, AEC_RESET);
+    printf("[%sTotal Frees%s] %s%s%u%s\n", AEC_MAGENTA, AEC_RESET, AEC_BLUE,
+           AEC_BOLD, allocation_record.total_frees, AEC_RESET);
+    printf("[%sTotal Bytes%s] %s%s%u%s\n", AEC_MAGENTA, AEC_RESET, AEC_BLUE,
+           AEC_BOLD, allocation_record.total_bytes, AEC_RESET);
 }
 
 void xdbg_initialize(const char *file, unsigned int line,
@@ -321,10 +307,9 @@ void xdbg_initialize(const char *file, unsigned int line,
         fprintf(stderr,
                 "[%s%sERROR%s] XDBG_INITIALIZE() called twice on "
                 "file %s%s%s%s, on line %s%s%u%s, within function %s%s%s%s.\n",
-                XDBG_ANSI_RED, XDBG_ANSI_BOLD, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, file, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, line, XDBG_ANSI_RESET, XDBG_ANSI_CYAN,
-                XDBG_ANSI_ITALIC, function, XDBG_ANSI_RESET);
+                AEC_RED, AEC_BOLD, AEC_RESET, AEC_CYAN, AEC_ITALIC, file,
+                AEC_RESET, AEC_CYAN, AEC_ITALIC, line, AEC_RESET, AEC_CYAN,
+                AEC_ITALIC, function, AEC_RESET);
 
         exit(EXIT_FAILURE);
     }

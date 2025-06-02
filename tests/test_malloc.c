@@ -1,4 +1,4 @@
-#include "xdbg.h"
+#include "../xdbg.h"
 
 // Summary of Malloc Test Cases:
 // Case     Description
