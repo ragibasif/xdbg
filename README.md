@@ -1,7 +1,6 @@
 # xdbg
 
-> [!WARNING]
-> WIP!
+WIP!
 
 > [!WARNING]
 > This project is intended for experienced C programmers. As such, no build instructions, usage examples, or run-time documentation are provided. Users are expected to be comfortable reading and understanding C code, and capable of integrating or adapting the code to their own build systems and use cases.
@@ -27,18 +26,15 @@ Place `xdbg.h` and `xdbg.c` in your project folder and include the header file.
 
 ## License
 
-This project is licensed under the **MIT license**. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT license**. See the [LICENSE](LICENSE)
+file for details.
 
 ## Acknowledgements
 
 This project is inspired by:
 
-    - [Rust's dbg macro](https://doc.rust-lang.org/std/macro.dbg.html)
-
-    - [dbg-macro for C++](https://github.com/sharkdp/dbg-macro?tab=readme-ov-file)
-
-    - [dbg-macro for C](https://github.com/eerimoq/dbg-macro)
-
-    - [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
-
-    - [forge memory debugging system](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)
+- [Rust's dbg macro](https://doc.rust-lang.org/std/macro.dbg.html)
+- [dbg-macro for C++](https://github.com/sharkdp/dbg-macro?tab=readme-ov-file)
+- [dbg-macro for C](https://github.com/eerimoq/dbg-macro)
+- [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
+- [forge memory debugging system](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)
