@@ -1,30 +1,30 @@
-# Makefile
-
-GREEN=\033[0;92m
-RED=\033[0;91m
-MAGENTA=\033[0;95m
+GREEN=\033[0;32m
+RED=\033[0;31m
+MAGENTA=\033[0;35m
 RESET=\033[0m
 
 CC := clang
-CFLAGS := -std=c99 -Wall -Wextra -Weverything -O0 -g3 -pedantic -DDEBUG
+CFLAGS := -std=c99  -Wall -Wextra -Weverything -O1 -g -pedantic -v -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
 DBG = lldb
 
-LDFLAGS := -lc
-LIBS =
+LDFLAGS := -v -lc
 
-EXECUTABLE := xdbg
+EXECUTABLE := exe
+
 
 SRCS := $(wildcard *.c)
+SRCS += $(wildcard */*.c)
+# SRCS += $(wildcard */*/*.c)
+
 HDRS := $(wildcard *.h)
+HDRS += $(wildcard */*.h)
+# HDRS += $(wildcard */*/*.h)
+
 OBJS := $(patsubst %.c, %.o, $(SRCS))
 
-.PHONY: all clean help run check
+.PHONY: all clean help run
 
 all: $(EXECUTABLE)
-
-check:
-	@which $(CC) > /dev/null && echo "$(GREEN)✅ SUCCESS: $(CC) is installed$(RESET)" || echo "$(RED)❌ ERROR: $(CC) not found, please install clang$(RESET)"
-	@which $(DBG) > /dev/null && echo "$(GREEN)✅ SUCCESS: $(DBG) is installed$(RESET)" || echo "$(RED)❌ ERROR: $(DBG) not found, please install lldb$(RESET)"
 
 $(EXECUTABLE): $(OBJS)
 	@echo "🔧 Linking ${MAGENTA}$@${RESET} ..."
@@ -38,19 +38,18 @@ $(EXECUTABLE): $(OBJS)
 		echo "$(GREEN)✅ Compiled: $<$(RESET)" || \
 		(echo "$(RED)❌ Compile failed: $<$(RESET)" && exit 1)
 
-debug: $(EXECUTABLE)
-	@$(DBG) ./${EXECUTABLE}
-
 clean:
-	@echo "${MAGENTA}make clean${RESET} $(RM) -r $(EXECUTABLE) $(OBJS)  *~ *.bak *.dSYM *.out .install"
-	@$(RM) -r $(EXECUTABLE) $(OBJS) *~ *.bak *.dSYM *.out .install .*.un~
+	@echo "${MAGENTA}make clean${RESET} $(RM) -r $(EXECUTABLE) $(OBJS) *~ *.bak *.dSYM *.out"
+	@$(RM) -r $(EXECUTABLE) $(OBJS) *~ *.bak *.dSYM *.out
 
 
 run: $(EXECUTABLE)
+	@echo "${MAGENTA}make run${RESET}"
 	@make clean
 	@make all
 	@./$(EXECUTABLE)
 	@make clean
+
 
 help:
 	@echo "${MAGENTA}make help${RESET}"
