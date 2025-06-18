@@ -1,11 +1,6 @@
 # xdbg
 
-WIP!
-
-> [!WARNING]
-> This project is intended for experienced C programmers. As such, no build instructions, usage examples, or run-time documentation are provided. Users are expected to be comfortable reading and understanding C code, and capable of integrating or adapting the code to their own build systems and use cases.
-
-An extremely minimal dynamic memory debugger written in C. The goal of this project is to provide a very lightweight memory debugging library that can be included in any C/C++ project to aid in debugging dynamic memory allocation. It works by defining macros that replace calls to `malloc`, `realloc`, `calloc`, and `free` and tracking and logging them to be able to catch memory leaks.
+A minimal memory debugger written in C for **educational and recreational purposes.**
 
 ![example](./assets/example.gif)
 
@@ -31,8 +26,11 @@ file for details.
 
 ## Acknowledgements
 
-- [Rust's dbg macro](https://doc.rust-lang.org/std/macro.dbg.html)
-- [dbg-macro for C++](https://github.com/sharkdp/dbg-macro?tab=readme-ov-file)
-- [dbg-macro for C](https://github.com/eerimoq/dbg-macro)
-- [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
 - [forge memory debugging system](https://github.com/quelsolaar/MergeSource/blob/main/forge.h)
+- [stb_leakcheck.h](https://github.com/nothings/stb/blob/master/stb_leakcheck.h)
+- [Stack Canaries](https://ctf101.org/binary-exploitation/stack-canaries/)
+- [stack-canaries-gingerly-sidestepping-the-cage](https://www.sans.org/blog/stack-canaries-gingerly-sidestepping-the-cage/)
+- [stack-corruption-detection-using-canary-value](https://stackoverflow.com/questions/63024660/stack-corruption-detection-using-canary-value)
+- [basics of stack canaries](https://cs4401.walls.ninja/notes/lecture/basics_canaries.html)
+- [customizing the stack canary value](https://onlinedocs.microchip.com/oxy/GUID-BE362C91-6400-481F-9D86-10A1C40CA77C-en-US-5/GUID-F9DA6B9F-5799-463D-A8E3-1EBB368A4E68.html)
+- [use compiler flags for stack protection in gcc and clang](https://developers.redhat.com/articles/2022/06/02/use-compiler-flags-stack-protection-gcc-and-clang#)
